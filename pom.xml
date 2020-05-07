@@ -14,7 +14,6 @@
     <modules>
         <module>wow-excel-core</module>
         <module>wow-excel-poi</module>
-        <module>wow-excel-easyexcel</module>
     </modules>
 
     <properties>
@@ -37,6 +36,7 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- wow-excel -->
             <dependency>
                 <groupId>com.nekolr</groupId>
                 <artifactId>wow-excel-core</artifactId>
@@ -45,11 +45,6 @@
             <dependency>
                 <groupId>com.nekolr</groupId>
                 <artifactId>wow-excel-poi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.nekolr</groupId>
-                <artifactId>wow-excel-easyexcel</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- apache poi -->
@@ -62,12 +57,6 @@
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
                 <version>${poi.version}</version>
-            </dependency>
-            <!-- alibaba easyexcel -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>easyexcel</artifactId>
-                <version>${easyexcel.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -95,7 +84,6 @@
                 <configuration>
                     <source>${compile.version}</source>
                     <target>${compile.version}</target>
-                    <compilerArgument>-Xlint:unchecked</compilerArgument>
                 </configuration>
             </plugin>
             <!-- javadoc -->

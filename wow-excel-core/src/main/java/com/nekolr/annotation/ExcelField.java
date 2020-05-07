@@ -1,6 +1,6 @@
 package com.nekolr.annotation;
 
-import com.nekolr.convert.DataConverter;
+import com.nekolr.metadata.DataConverter;
 import com.nekolr.convert.DefaultDataConverter;
 
 import java.lang.annotation.*;

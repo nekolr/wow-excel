@@ -1,5 +1,7 @@
 package com.nekolr.read;
 
+import com.nekolr.convert.DefaultDataConverter;
+import com.nekolr.metadata.DataConverter;
 import com.nekolr.metadata.ExcelBean;
 import com.nekolr.metadata.ExcelListener;
 import com.nekolr.metadata.ExcelReadResultListener;
@@ -53,11 +55,18 @@ public class ExcelReadContext<R> {
      */
     private ExcelReadResultListener<R> readResultListener;
 
+    /**
+     * 数据转换器集合
+     */
+    private Map<Class<? extends DataConverter>, DataConverter> converterCache = new HashMap<>();
+
 
     public ExcelReadContext(InputStream inputStream, Class<R> excelClass, ExcelBean excelBean) {
         this.inputStream = inputStream;
         this.excelClass = excelClass;
         this.excelBean = excelBean;
+        // 添加默认的数据转换器
+        this.converterCache.put(DefaultDataConverter.class, new DefaultDataConverter());
     }
 
     /**

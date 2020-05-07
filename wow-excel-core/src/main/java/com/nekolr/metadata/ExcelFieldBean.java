@@ -1,6 +1,5 @@
 package com.nekolr.metadata;
 
-import com.nekolr.convert.DataConverter;
 import lombok.Data;
 
 import java.lang.reflect.Field;

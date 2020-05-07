@@ -1,5 +1,6 @@
 package com.nekolr.util;
 
+import com.nekolr.metadata.DataConverter;
 import com.nekolr.metadata.ExcelFieldBean;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -41,8 +42,16 @@ public class ExcelUtils {
         }
     }
 
-    public static Object useConverter(Object value) {
-        return value;
+    /**
+     * 使用读转换器
+     *
+     * @param value         单元格数据
+     * @param field         字段元数据
+     * @param dataConverter 使用的数据转换器
+     * @return 转换后的数据
+     */
+    public static Object useReadConverter(Object value, ExcelFieldBean field, DataConverter dataConverter) {
+        return dataConverter.toEntityAttribute(field, value);
     }
 
 }

@@ -2,6 +2,7 @@ package com.nekolr.read.processor;
 
 import com.nekolr.exception.ExcelReadInitException;
 import com.nekolr.exception.ExcelReadException;
+import com.nekolr.metadata.DataConverter;
 import com.nekolr.metadata.ExcelBean;
 import com.nekolr.metadata.ExcelFieldBean;
 import com.nekolr.metadata.ExcelListener;
@@ -23,7 +24,7 @@ import java.util.List;
  *
  * @param <R> 使用 @Excel 注解的类类型
  */
-public class POIExcelReadProcessor<R> implements ExcelReadProcessor<R> {
+public class POIUserModelExcelReadProcessor<R> implements ExcelReadProcessor<R> {
 
     /**
      * 读上下文
@@ -100,24 +101,25 @@ public class POIExcelReadProcessor<R> implements ExcelReadProcessor<R> {
                     Field field = excelFieldBeanList.get(col).getExcelField();
                     Cell cell = row.getCell(colIndex + col);
                     ExcelFieldBean excelFieldBean = excelFieldBeanList.get(col);
+                    DataConverter dataConverter = this.getDataConverter(excelFieldBean);
                     if (cell != null) {
                         cellValue = ExcelUtils.getCellValue(cell, excelFieldBean, field);
                         if (cellValue != null) {
                             // Event: 读单元格结束后触发
                             cellValue = ExcelReadEventProcessor.afterReadCell(readListeners, excelFieldBean, cellValue, row.getRowNum(), col);
                             // 使用转换器转换结果
-                            cellValue = ExcelUtils.useConverter(cellValue);
+                            cellValue = ExcelUtils.useReadConverter(cellValue, excelFieldBean, dataConverter);
                         } else {
                             // 单元格值为空
                             if (!excelFieldBean.isAllowEmpty()) {
                                 // 如果字段不允许空值，那么需要用户通过监听器来自己处理空值
-                                cellValue = this.notAllowEmpty(this.readContext, excelFieldBean, row.getRowNum(), col);
+                                cellValue = this.handleEmpty(this.readContext, excelFieldBean, row.getRowNum(), col);
                             }
                         }
                     } else {
                         // 单元格不存在
                         if (!excelFieldBean.isAllowEmpty()) {
-                            cellValue = this.notAllowEmpty(this.readContext, excelFieldBean, row.getRowNum(), col);
+                            cellValue = this.handleEmpty(this.readContext, excelFieldBean, row.getRowNum(), col);
                         } else {
                             cellValue = null;
                         }
@@ -138,17 +140,39 @@ public class POIExcelReadProcessor<R> implements ExcelReadProcessor<R> {
     }
 
     /**
+     * 单元格为空时执行
+     *
      * @param readContext    读上下文
      * @param excelFieldBean 字段元数据实体
      * @param rowNum         行号
      * @param colNum         列号
      */
-    private Object notAllowEmpty(ExcelReadContext<R> readContext, ExcelFieldBean excelFieldBean, int rowNum, int colNum) {
+    private Object handleEmpty(ExcelReadContext<R> readContext, ExcelFieldBean excelFieldBean, int rowNum, int colNum) {
         List<ExcelListener> emptyReadListeners = readContext.getReadListenerCache().get(ExcelEmptyReadListener.class);
         if (emptyReadListeners == null) {
             throw new ExcelReadInitException("If the field is not allowed empty, please specify a listener that handles null value.");
         }
         return ExcelReadEventProcessor.afterReadEmptyCell(emptyReadListeners, excelFieldBean, rowNum, colNum);
+    }
 
+    /**
+     * 获取数据转换器
+     *
+     * @param excelFieldBean 表头字段对应的元数据
+     * @return 数据转换器
+     */
+    private DataConverter getDataConverter(ExcelFieldBean excelFieldBean) {
+        Class<? extends DataConverter> converterClass = excelFieldBean.getConverter();
+        DataConverter dataConverter = this.readContext.getConverterCache().get(converterClass);
+        if (dataConverter == null) {
+            try {
+                DataConverter converter = excelFieldBean.getConverter().newInstance();
+                this.readContext.getConverterCache().put(converterClass, converter);
+                return converter;
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new ExcelReadInitException("Data converter: " + converterClass.getName() + " init failure: " + e.getMessage());
+            }
+        }
+        return dataConverter;
     }
 }
