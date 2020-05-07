@@ -243,6 +243,9 @@ public class ExcelReader<R> {
             if (this.readContext.getInputStream() != null) {
                 this.readContext.getInputStream().close();
             }
+            if (this.readContext.getWorkbook() != null) {
+                this.readContext.getWorkbook().close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
