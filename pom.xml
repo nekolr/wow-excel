@@ -22,10 +22,17 @@
         <compile.version>1.8</compile.version>
         <poi.version>4.1.2</poi.version>
         <easyexcel.version>2.2.3</easyexcel.version>
+        <lombok.version>1.18.12</lombok.version>
     </properties>
 
     <dependencies>
-
+        <!-- lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -54,11 +61,6 @@
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-examples</artifactId>
                 <version>${poi.version}</version>
             </dependency>
             <!-- alibaba easyexcel -->
@@ -93,6 +95,7 @@
                 <configuration>
                     <source>${compile.version}</source>
                     <target>${compile.version}</target>
+                    <compilerArgument>-Xlint:unchecked</compilerArgument>
                 </configuration>
             </plugin>
             <!-- javadoc -->
