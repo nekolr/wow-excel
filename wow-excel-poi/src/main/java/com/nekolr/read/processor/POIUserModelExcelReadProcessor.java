@@ -34,17 +34,18 @@ public class POIUserModelExcelReadProcessor<R> implements ExcelReadProcessor<R> 
     @Override
     public void init(ExcelReadContext<R> readContext) {
         this.readContext = readContext;
+        Workbook workbook;
+        try {
+            workbook = WorkbookFactory.create(this.readContext.getInputStream(), this.readContext.getPassword());
+            this.readContext.setWorkbook(workbook);
+        } catch (Exception e) {
+            throw new ExcelReadException(e.getMessage());
+        }
     }
 
     @Override
     public void read(int headIndex, int colIndex, String sheetName) {
-        Workbook workbook;
-        try {
-            workbook = WorkbookFactory.create(this.readContext.getInputStream(), this.readContext.getPassword());
-        } catch (Exception e) {
-            throw new ExcelReadException(e.getMessage());
-        }
-        Sheet sheet = workbook.getSheet(sheetName);
+        Sheet sheet = this.readContext.getWorkbook().getSheet(sheetName);
         if (sheet == null) {
             throw new ExcelReadException("The " + sheetName + " is not found in the workbook");
         }
@@ -53,13 +54,7 @@ public class POIUserModelExcelReadProcessor<R> implements ExcelReadProcessor<R> 
 
     @Override
     public void read(int headIndex, int colIndex, int sheetAt) {
-        Workbook workbook;
-        try {
-            workbook = WorkbookFactory.create(this.readContext.getInputStream(), this.readContext.getPassword());
-        } catch (Exception e) {
-            throw new ExcelReadException(e.getMessage());
-        }
-        Sheet sheet = workbook.getSheetAt(sheetAt);
+        Sheet sheet = this.readContext.getWorkbook().getSheetAt(sheetAt);
         if (sheet == null) {
             throw new ExcelReadException("The sheetAt: " + sheetAt + " is not found in the workbook");
         }

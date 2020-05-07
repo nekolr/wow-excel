@@ -9,6 +9,7 @@ import com.nekolr.read.listener.ExcelEmptyReadListener;
 import com.nekolr.read.listener.ExcelReadListener;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -24,6 +25,11 @@ import java.util.Map;
 @Getter
 @Setter
 public class ExcelReadContext<R> {
+
+    /**
+     * workbook
+     */
+    private Workbook workbook;
 
     /**
      * Excel 输入流
