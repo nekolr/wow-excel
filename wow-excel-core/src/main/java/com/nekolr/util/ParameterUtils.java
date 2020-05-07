@@ -38,8 +38,11 @@ public class ParameterUtils {
                 .collect(Collectors.toList());
 
         int rowIndex;
-        // 如果多级表头中表头的个数为 1，那么这是一种错误的配置
-        if (multiFieldList.size() == 1) {
+        if (multiFieldList.size() == 0) {
+            // 没有多级表头存在时默认从 1 开始
+            rowIndex = 1;
+        } else if (multiFieldList.size() == 1) {
+            // 如果多级表头中表头的个数为 1，那么这是一种错误的配置
             throw new ExcelReadInitException("There is only one header with level: " + multiFieldList.get(0).getLevel());
         } else {
             // 当多级表头有多种时，取 level 最大的那个作为开始行数
