@@ -18,19 +18,6 @@ public interface ExcelReadProcessor<R> {
 
     /**
      * 读
-     *
-     * @param headIndex 开始行
-     * @param colIndex  开始列
-     * @param sheetName sheet 名称
      */
-    void read(int headIndex, int colIndex, String sheetName);
-
-    /**
-     * 读
-     *
-     * @param headIndex 开始行
-     * @param colIndex  开始列
-     * @param sheetAt   sheet 位置
-     */
-    void read(int headIndex, int colIndex, int sheetAt);
+    void read();
 }

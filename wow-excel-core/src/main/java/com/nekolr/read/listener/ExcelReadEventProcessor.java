@@ -1,6 +1,6 @@
 package com.nekolr.read.listener;
 
-import com.nekolr.metadata.ExcelFieldBean;
+import com.nekolr.metadata.ExcelField;
 import com.nekolr.metadata.ExcelListener;
 import com.nekolr.metadata.ExcelReadResultListener;
 import com.nekolr.read.ExcelReadContext;
@@ -19,8 +19,7 @@ public class ExcelReadEventProcessor {
      * @param readContext   读上下文
      * @param <R>           使用 @Excel 注解的类类型
      */
-    public static <R> void beforeReadSheet(List<ExcelListener> readListeners,
-                                           ExcelReadContext<R> readContext) {
+    public static <R> void beforeReadSheet(List<ExcelListener> readListeners, ExcelReadContext<R> readContext) {
         if (readListeners != null) {
             readListeners.forEach(listener -> ((ExcelReadListener<R>) listener).beforeReadSheet(readContext));
         }
@@ -37,7 +36,7 @@ public class ExcelReadEventProcessor {
      * @param <R>           使用 @Excel 注解的类类型
      * @return 处理后的单元格值
      */
-    public static <R> Object afterReadCell(List<ExcelListener> readListeners, ExcelFieldBean field,
+    public static <R> Object afterReadCell(List<ExcelListener> readListeners, ExcelField field,
                                            Object cellValue, int rowNum, int colNum) {
         if (readListeners != null) {
             for (ExcelListener readListener : readListeners) {
@@ -58,7 +57,7 @@ public class ExcelReadEventProcessor {
      * @param <R>           使用 @Excel 注解的类类型
      * @return 处理后的单元格值
      */
-    public static <R> Object afterReadEmptyCell(List<ExcelListener> readListeners, ExcelFieldBean field,
+    public static <R> Object afterReadEmptyCell(List<ExcelListener> readListeners, ExcelField field,
                                                 int rowNum, int colNum) {
         Object cellValue = null;
         if (readListeners != null) {
@@ -102,7 +101,7 @@ public class ExcelReadEventProcessor {
     }
 
     /**
-     * 结果通知事件处理
+     * 结果通知
      *
      * @param resultListener 结果通知监听器
      * @param result         读取结果

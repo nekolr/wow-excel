@@ -1,5 +1,5 @@
 # wow-excel
-使读写 excel 更简单。
+让读写 excel 更简单。
 
 # 特性
 - 支持单级表头和多级表头
@@ -35,8 +35,9 @@ public class Project {
 public class Test {
     public static void main(String[] args) {
         List<Project> list = WoWExcel.createReader("计划书.xls", Project.class)
-                // 起始行 1，起始列 1
-                .readAndGet(1, 1, "Sheet1");
+                .rowIndex(2)
+                .colIndex(1)
+                .readAndGet();
         list.forEach(System.out::println);
     }
 }
@@ -62,26 +63,27 @@ public class Demo {
     @ExcelField(value = "立项时间")
     private Date date;
 
-    @ExcelField(value = "一季度", level = 2)
+    @ExcelField(value = "一季度")
     private Double q1;
 
-    @ExcelField(value = "二季度", level = 2)
+    @ExcelField(value = "二季度")
     private Double q2;
 
-    @ExcelField(value = "三季度", level = 2)
+    @ExcelField(value = "三季度")
     private Double q3;
 
-    @ExcelField(value = "四季度", level = 2)
+    @ExcelField(value = "四季度")
     private Double q4;
 }
 ```
 
-其中，level 代表表头的深度，默认情况下 level 都是 1，即都是单级表头。接下来是读取 excel 的代码：
+接下来是读取 excel 的代码：
 
 ```java
 public class Test {
     public static void main(String[] args) {
         List<Project> list = WoWExcel.createReader("计划书.xls", Project.class)
+                .rowIndex(2)
                 .readAndGet();
         list.forEach(System.out::println);
     }

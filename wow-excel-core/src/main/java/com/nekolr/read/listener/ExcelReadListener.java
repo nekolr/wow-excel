@@ -1,6 +1,6 @@
 package com.nekolr.read.listener;
 
-import com.nekolr.metadata.ExcelFieldBean;
+import com.nekolr.metadata.ExcelField;
 import com.nekolr.metadata.ExcelListener;
 import com.nekolr.read.ExcelReadContext;
 
@@ -28,12 +28,12 @@ public interface ExcelReadListener<R> extends ExcelListener {
      * @param colNum    列号
      * @return 处理后的单元格值
      */
-    default Object afterReadCell(ExcelFieldBean field, Object cellValue, int rowNum, int colNum) {
+    default Object afterReadCell(ExcelField field, Object cellValue, int rowNum, int colNum) {
         return cellValue;
     }
 
     /**
-     * 在读取完 sheet 后调用
+     * 在读完 sheet 后调用
      *
      * @param readContext 读上下文
      */

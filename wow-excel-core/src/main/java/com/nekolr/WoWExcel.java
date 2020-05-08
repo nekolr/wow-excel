@@ -1,10 +1,10 @@
 package com.nekolr;
 
 import com.nekolr.exception.ExcelReadInitException;
-import com.nekolr.metadata.ExcelBean;
+import com.nekolr.metadata.Excel;
 import com.nekolr.read.ExcelReadContext;
 import com.nekolr.read.ExcelReader;
-import com.nekolr.util.Excel2BeanUtil;
+import com.nekolr.util.AnnotationUtils;
 
 import java.io.*;
 
@@ -53,8 +53,8 @@ public class WoWExcel {
      * @return ExcelReader
      */
     public static <R> ExcelReader<R> createReader(InputStream inputStream, Class<R> excelClass, String... ignores) {
-        ExcelBean excelBean = Excel2BeanUtil.toBean(excelClass, ignores);
-        ExcelReadContext<R> readContext = new ExcelReadContext<>(inputStream, excelClass, excelBean);
+        Excel excel = AnnotationUtils.toBean(excelClass, ignores);
+        ExcelReadContext<R> readContext = new ExcelReadContext<>(inputStream, excelClass, excel);
         return new ExcelReader<>(readContext);
     }
 }

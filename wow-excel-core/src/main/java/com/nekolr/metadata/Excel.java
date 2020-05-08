@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExcelBean {
+public class Excel {
 
     /**
      * Excel 名称
@@ -30,7 +30,7 @@ public class ExcelBean {
     /**
      * 字段列表
      *
-     * @see ExcelFieldBean
+     * @see ExcelField
      */
-    private List<ExcelFieldBean> fieldList;
+    private List<ExcelField> fieldList;
 }

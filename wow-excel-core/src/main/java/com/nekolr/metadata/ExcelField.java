@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
  * Excel 字段实体
  */
 @Data
-public class ExcelFieldBean {
+public class ExcelField {
 
     /**
      * 字段名称
@@ -16,24 +16,17 @@ public class ExcelFieldBean {
     private String filedName;
 
     /**
-     * 表头等级
-     * <p>
-     * 多级表头是指表头含有上下级关系，如果只有一级上下级关系，则 level = 2
-     */
-    private int level;
-
-    /**
      * 表头字段在 Excel 中出现的顺序
      */
     private int order;
 
     /**
-     * 表头字段是否允许出现空值
+     * 表头字段所在列的数据是否允许出现空值
      */
     private boolean allowEmpty;
 
     /**
-     * 字表头段是否需要自动去除头尾空格
+     * 表头字段所在列的数据是否需要自动去除头尾空格
      */
     private boolean autoTrim;
 
@@ -59,6 +52,8 @@ public class ExcelFieldBean {
 
     /**
      * 使用该注解的 Field
+     *
+     * @see java.lang.reflect.Field
      */
-    private Field excelField;
+    private Field field;
 }

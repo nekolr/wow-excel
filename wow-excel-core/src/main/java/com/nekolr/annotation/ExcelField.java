@@ -10,7 +10,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.FIELD})
 public @interface ExcelField {
 
     /**
@@ -19,16 +19,6 @@ public @interface ExcelField {
      * @return 表头字段名称
      */
     String value() default "";
-
-    /**
-     * 表头等级
-     * <p>
-     * 多级表头是指表头含有上下级关系，如果只有一层上下级关系，则 level = 2
-     * 默认为单表头，即 level = 1
-     *
-     * @return 表头等级
-     */
-    int level() default 1;
 
     /**
      * 字段出现在 Excel 中的顺序，数值小的在前，默认情况下为实体字段顺序

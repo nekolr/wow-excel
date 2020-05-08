@@ -1,7 +1,7 @@
 package com.nekolr.convert;
 
 import com.nekolr.metadata.DataConverter;
-import com.nekolr.metadata.ExcelFieldBean;
+import com.nekolr.metadata.ExcelField;
 
 /**
  * Long 类型和 String 类型的转换器
@@ -10,12 +10,12 @@ import com.nekolr.metadata.ExcelFieldBean;
  */
 public class StringLongDataConverter implements DataConverter {
     @Override
-    public Object toEntityAttribute(ExcelFieldBean field, Object cellValue) {
+    public Object toEntityAttribute(ExcelField field, Object cellValue) {
         return Long.parseLong(cellValue.toString());
     }
 
     @Override
-    public Object toExcelAttribute(ExcelFieldBean field, Object attrValue) {
+    public Object toExcelAttribute(ExcelField field, Object attrValue) {
         // TODO:
         return null;
     }

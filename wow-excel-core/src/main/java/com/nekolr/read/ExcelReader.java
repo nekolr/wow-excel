@@ -46,24 +46,90 @@ public class ExcelReader<R> {
     }
 
     /**
-     * 添加读监听器集合
-     *
-     * @param readListenerList 读监听器集合
-     * @return ExcelReader
-     */
-    public ExcelReader<R> addListeners(List<ExcelReadListener<R>> readListenerList) {
-        readListenerList.forEach(this.readContext::addListener);
-        return this;
-    }
-
-    /**
-     * 添加文档密码
+     * 设置文档密码
      *
      * @param password 密码
      * @return ExcelReader
      */
-    public ExcelReader<R> addPassword(String password) {
+    public ExcelReader<R> password(String password) {
         this.readContext.setPassword(password);
+        return this;
+    }
+
+    /**
+     * 设置 sheet 名称
+     *
+     * @param sheetName sheet 名称
+     * @return ExcelReader
+     */
+    public ExcelReader<R> sheetName(String sheetName) {
+        this.readContext.setSheetName(sheetName);
+        return this;
+    }
+
+    /**
+     * 设置 sheet 坐标
+     *
+     * @param sheetAt sheet 坐标
+     * @return ExcelReader
+     */
+    public ExcelReader<R> sheetAt(Integer sheetAt) {
+        if (sheetAt < 0) {
+            throw new IllegalArgumentException("Sheet index must be greater than or equal to 0");
+        }
+        this.readContext.setSheetAt(sheetAt);
+        return this;
+    }
+
+    /**
+     * 设置数据起始行号
+     * <p>
+     * 是数据开始的行号，不是表头开始的行号
+     *
+     * @param rowIndex 数据起始行号
+     * @return ExcelReader
+     */
+    public ExcelReader<R> rowIndex(int rowIndex) {
+        if (rowIndex < 0) {
+            throw new IllegalArgumentException("Row index must be greater than or equal to 0");
+        }
+        this.readContext.setRowIndex(rowIndex);
+        return this;
+    }
+
+    /**
+     * 设置数据起始列号
+     *
+     * @param colIndex 数据起始行号
+     * @return ExcelReader
+     */
+    public ExcelReader<R> colIndex(int colIndex) {
+        if (colIndex < 0) {
+            throw new IllegalArgumentException("column index must be greater than or equal to 0");
+        }
+        this.readContext.setColIndex(colIndex);
+        return this;
+    }
+
+    /**
+     * 设置读监听器
+     *
+     * @param readListener 读监听器
+     * @return ExcelReader
+     */
+    public ExcelReader<R> listener(ExcelListener readListener) {
+        this.readContext.addListener(readListener);
+        return this;
+    }
+
+    /**
+     * 设置读监听器集合
+     *
+     * @param readListeners 读监听器集合
+     * @return ExcelReader
+     */
+    public ExcelReader<R> listeners(ExcelReadListener<R>[] readListeners) {
+        Arrays.stream(readListeners).forEach(this.readContext::addListener);
         return this;
     }
 
@@ -79,68 +145,13 @@ public class ExcelReader<R> {
     }
 
     /**
-     * 订阅结果
-     *
-     * @param readListener 读监听器
-     * @return ExcelReader
-     */
-    public ExcelReader<R> addListener(ExcelListener readListener) {
-        this.readContext.addListener(readListener);
-        return this;
-    }
-
-    /**
      * 读 Excel
      */
     public void read() {
-        this.read(0, 0, 0);
-    }
-
-    /**
-     * 读 Excel
-     *
-     * @param sheetName sheet 名称
-     */
-    public void read(String sheetName) {
-        this.read(0, 0, sheetName);
-    }
-
-    /**
-     * 读 Excel
-     *
-     * @param sheetAt sheet 位置
-     */
-    public void read(int sheetAt) {
-        this.read(0, 0, sheetAt);
-    }
-
-    /**
-     * 读 Excel
-     *
-     * @param headIndex 起始行
-     * @param colIndex  起始列
-     * @param sheetName sheet 名称
-     */
-    public void read(int headIndex, int colIndex, String sheetName) {
         try {
-            this.doRead(headIndex, colIndex, sheetName);
+            this.doRead();
         } finally {
-            this.finish();
-        }
-    }
-
-    /**
-     * 读 Excel
-     *
-     * @param headIndex 起始行
-     * @param colIndex  起始列
-     * @param sheetAt   sheet 位置
-     */
-    public void read(int headIndex, int colIndex, int sheetAt) {
-        try {
-            this.doRead(headIndex, colIndex, sheetAt);
-        } finally {
-            this.finish();
+            this.close();
         }
     }
 
@@ -150,95 +161,28 @@ public class ExcelReader<R> {
      * @return 结果集合
      */
     public List<R> readAndGet() {
-        return this.readAndGet(0, 0, 0);
-    }
-
-    /**
-     * 读 Excel 并获取结果
-     *
-     * @param sheetName sheet 名称
-     * @return 结果集合
-     */
-    public List<R> readAndGet(String sheetName) {
-        return this.readAndGet(0, 0, sheetName);
-    }
-
-    /**
-     * 读 Excel 并获取结果
-     *
-     * @param sheetAt sheet 位置
-     * @return 结果集合
-     */
-    public List<R> readAndGet(int sheetAt) {
-        return this.readAndGet(0, 0, sheetAt);
-    }
-
-    /**
-     * 读 Excel 并获取结果
-     *
-     * @param headIndex 起始行
-     * @param colIndex  起始列
-     * @param sheetAt   sheet 位置
-     * @return 结果集合
-     */
-    public List<R> readAndGet(int headIndex, int colIndex, int sheetAt) {
         List<R> list = new ArrayList<>();
         try {
             this.readContext.setReadResultListener(list::addAll);
-            this.doRead(headIndex, colIndex, sheetAt);
+            this.doRead();
         } finally {
-            this.finish();
-        }
-        return list;
-    }
-
-    /**
-     * 读 Excel 并获取结果
-     *
-     * @param headIndex 起始行
-     * @param colIndex  起始列
-     * @param sheetName sheet 名称
-     * @return 结果集合
-     */
-    public List<R> readAndGet(int headIndex, int colIndex, String sheetName) {
-        List<R> list = new ArrayList<>();
-        try {
-            this.readContext.setReadResultListener(list::addAll);
-            this.doRead(headIndex, colIndex, sheetName);
-        } finally {
-            this.finish();
+            this.close();
         }
         return list;
     }
 
     /**
      * 执行读
-     *
-     * @param headIndex 起始行
-     * @param colIndex  起始列
-     * @param sheetName sheet 名称
      */
-    private void doRead(int headIndex, int colIndex, String sheetName) {
+    private void doRead() {
         this.excelReadProcessor.init(this.readContext);
-        this.excelReadProcessor.read(headIndex, colIndex, sheetName);
+        this.excelReadProcessor.read();
     }
 
     /**
-     * 执行读
-     *
-     * @param headIndex 起始行
-     * @param colIndex  起始列
-     * @param sheetAt   sheet 位置
+     * 结束操作，关闭资源
      */
-    private void doRead(int headIndex, int colIndex, int sheetAt) {
-        this.excelReadProcessor.init(this.readContext);
-        this.excelReadProcessor.read(headIndex, colIndex, sheetAt);
-    }
-
-    /**
-     * 结束操作
-     */
-    private void finish() {
+    private void close() {
         try {
             if (this.readContext.getInputStream() != null) {
                 this.readContext.getInputStream().close();

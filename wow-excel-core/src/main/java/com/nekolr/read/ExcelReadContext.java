@@ -1,10 +1,8 @@
 package com.nekolr.read;
 
+import com.nekolr.Constants;
 import com.nekolr.convert.DefaultDataConverter;
-import com.nekolr.metadata.DataConverter;
-import com.nekolr.metadata.ExcelBean;
-import com.nekolr.metadata.ExcelListener;
-import com.nekolr.metadata.ExcelReadResultListener;
+import com.nekolr.metadata.*;
 import com.nekolr.read.listener.ExcelEmptyReadListener;
 import com.nekolr.read.listener.ExcelReadListener;
 import lombok.Getter;
@@ -27,6 +25,26 @@ import java.util.Map;
 public class ExcelReadContext<R> {
 
     /**
+     * sheet 名称
+     */
+    private String sheetName;
+
+    /**
+     * sheet 坐标
+     */
+    private Integer sheetAt;
+
+    /**
+     * 数据的行号（是数据开始的行号，不是表头开始的行号）
+     */
+    private int rowIndex = Constants.DEFAULT_ROW_INDEX;
+
+    /**
+     * 数据的列号
+     */
+    private int colIndex = Constants.DEFAULT_COL_INDEX;
+
+    /**
      * workbook
      */
     private Workbook workbook;
@@ -37,19 +55,23 @@ public class ExcelReadContext<R> {
     private InputStream inputStream;
 
     /**
+     * 文档密码
+     */
+    private String password;
+
+    /**
      * 使用 Excel 注解的类
+     *
+     * @see com.nekolr.annotation.Excel
      */
     private Class<R> excelClass;
 
     /**
-     * 使用 @Excel 注解的类的元数据
+     * Excel 注解的元数据
+     *
+     * @see com.nekolr.annotation.Excel
      */
-    private ExcelBean excelBean;
-
-    /**
-     * 文档密码
-     */
-    private String password;
+    private Excel excel;
 
     /**
      * 读监听器集合
@@ -67,10 +89,10 @@ public class ExcelReadContext<R> {
     private Map<Class<? extends DataConverter>, DataConverter> converterCache = new HashMap<>();
 
 
-    public ExcelReadContext(InputStream inputStream, Class<R> excelClass, ExcelBean excelBean) {
+    public ExcelReadContext(InputStream inputStream, Class<R> excelClass, Excel excel) {
         this.inputStream = inputStream;
         this.excelClass = excelClass;
-        this.excelBean = excelBean;
+        this.excel = excel;
         // 添加默认的数据转换器
         this.converterCache.put(DefaultDataConverter.class, new DefaultDataConverter());
     }
