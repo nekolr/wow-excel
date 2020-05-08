@@ -52,7 +52,7 @@ public class Test {
 ```java
 @Excel(value = "计划书", type = ExcelType.XLS)
 @ToString
-public class Demo {
+public class Project {
 
     @ExcelField(value = "项目")
     private String project;
@@ -82,10 +82,10 @@ public class Demo {
 ```java
 public class Test {
     public static void main(String[] args) {
-        List<Project> list = WoWExcel.createReader("计划书.xls", Project.class)
+        WoWExcel.createReader("计划书.xls", Project.class)
                 .rowIndex(2)
-                .readAndGet();
-        list.forEach(System.out::println);
+                .subscribe(list -> list.forEach(System.out::println))
+                .read();
     }
 }
 ```
