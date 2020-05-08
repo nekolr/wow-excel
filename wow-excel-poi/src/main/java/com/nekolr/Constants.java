@@ -24,4 +24,9 @@ public class Constants {
      * 默认的数据起始列
      */
     public static final int DEFAULT_COL_INDEX = 0;
+
+    /**
+     * 默认关闭流式 reader
+     */
+    public static final boolean STREAMING_READER_DISABLED = false;
 }

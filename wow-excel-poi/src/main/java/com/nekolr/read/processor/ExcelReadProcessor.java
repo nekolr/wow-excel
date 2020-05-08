@@ -12,9 +12,9 @@ public interface ExcelReadProcessor<R> {
     /**
      * 初始化
      *
-     * @param excelReadContext 读上下文
+     * @param readContext 读上下文
      */
-    void init(ExcelReadContext<R> excelReadContext);
+    void init(ExcelReadContext<R> readContext);
 
     /**
      * 读

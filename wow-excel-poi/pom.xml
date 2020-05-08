@@ -15,8 +15,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.nekolr</groupId>
-            <artifactId>wow-excel-core</artifactId>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
         </dependency>
     </dependencies>
 

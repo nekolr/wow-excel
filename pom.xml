@@ -12,16 +12,16 @@
     <url>https://github.com/nekolr/wow-excel</url>
 
     <modules>
-        <module>wow-excel-core</module>
         <module>wow-excel-poi</module>
+        <module>wow-excel-esr</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <compile.version>1.8</compile.version>
         <poi.version>4.1.2</poi.version>
-        <easyexcel.version>2.2.3</easyexcel.version>
         <lombok.version>1.18.12</lombok.version>
+        <excel-streaming-reader.version>2.3.3</excel-streaming-reader.version>
     </properties>
 
     <dependencies>
@@ -39,12 +39,12 @@
             <!-- wow-excel -->
             <dependency>
                 <groupId>com.nekolr</groupId>
-                <artifactId>wow-excel-core</artifactId>
+                <artifactId>wow-excel-poi</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.nekolr</groupId>
-                <artifactId>wow-excel-poi</artifactId>
+                <artifactId>wow-excel-esr</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- apache poi -->
@@ -57,6 +57,12 @@
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
                 <version>${poi.version}</version>
+            </dependency>
+            <!-- excel streaming reader -->
+            <dependency>
+                <groupId>com.github.pjfanning</groupId>
+                <artifactId>excel-streaming-reader</artifactId>
+                <version>${excel-streaming-reader.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

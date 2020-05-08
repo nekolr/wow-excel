@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @param <R> 使用 @Excel 注解的类类型
  */
-public class POIUserModelExcelReadProcessor<R> implements ExcelReadProcessor<R> {
+public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
 
     /**
      * 读上下文
@@ -31,12 +31,14 @@ public class POIUserModelExcelReadProcessor<R> implements ExcelReadProcessor<R> 
     @Override
     public void init(ExcelReadContext<R> readContext) {
         this.readContext = readContext;
-        Workbook workbook;
-        try {
-            workbook = WorkbookFactory.create(this.readContext.getInputStream(), this.readContext.getPassword());
-            this.readContext.setWorkbook(workbook);
-        } catch (Exception e) {
-            throw new ExcelReadException(e.getMessage());
+        if (readContext.getWorkbook() == null) {
+            Workbook workbook;
+            try {
+                workbook = WorkbookFactory.create(this.readContext.getInputStream(), this.readContext.getPassword());
+                this.readContext.setWorkbook(workbook);
+            } catch (Exception e) {
+                throw new ExcelReadException(e.getMessage());
+            }
         }
     }
 
@@ -135,7 +137,7 @@ public class POIUserModelExcelReadProcessor<R> implements ExcelReadProcessor<R> 
     private Object handleEmpty(ExcelReadContext<R> readContext, ExcelField excelField, int rowNum, int colNum) {
         List<ExcelListener> emptyReadListeners = readContext.getReadListenerCache().get(ExcelEmptyReadListener.class);
         if (emptyReadListeners == null) {
-            throw new ExcelReadInitException("If the field is not allowed empty, please specify a listener that handles null value.");
+            throw new ExcelReadInitException("If the field is not allowed empty, please specify a com.nekolr.listener that handles null value.");
         }
         return ExcelReadEventProcessor.afterReadEmptyCell(emptyReadListeners, excelField, rowNum, colNum);
     }

@@ -48,6 +48,12 @@ public class AnnotationUtils {
                 })
                 .collect(Collectors.toList());
 
-        return new com.nekolr.metadata.Excel(excel.value(), excel.type(), excelFieldList);
+        com.nekolr.metadata.Excel excelBean = new com.nekolr.metadata.Excel();
+        excelBean.setExcelName(excel.value());
+        excelBean.setExcelType(excel.type());
+        excelBean.setRowCacheSize(excel.rowCacheSize());
+        excelBean.setBufferSize(excel.bufferSize());
+        excelBean.setFieldList(excelFieldList);
+        return excelBean;
     }
 }

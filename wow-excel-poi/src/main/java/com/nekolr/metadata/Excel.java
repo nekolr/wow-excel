@@ -1,9 +1,7 @@
 package com.nekolr.metadata;
 
 import com.nekolr.enums.ExcelType;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -11,8 +9,6 @@ import java.util.List;
  * Excel 实体
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Excel {
 
     /**
@@ -33,4 +29,14 @@ public class Excel {
      * @see ExcelField
      */
     private List<ExcelField> fieldList;
+
+    /**
+     * 加载到并常驻内存中的数据行数
+     */
+    private int rowCacheSize;
+
+    /**
+     * 将输入流读取到磁盘时所使用的缓冲区大小，单位 byte
+     */
+    private int bufferSize;
 }

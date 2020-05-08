@@ -55,6 +55,11 @@ public class ExcelReadContext<R> {
     private InputStream inputStream;
 
     /**
+     * 是否使用流式 reader
+     */
+    private boolean streamingReaderEnabled = Constants.STREAMING_READER_DISABLED;
+
+    /**
      * 文档密码
      */
     private String password;

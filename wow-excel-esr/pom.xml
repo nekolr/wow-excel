@@ -10,17 +10,17 @@
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>wow-excel-core</artifactId>
+    <artifactId>wow-excel-esr</artifactId>
     <name>${project.artifactId}</name>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
+            <groupId>com.nekolr</groupId>
+            <artifactId>wow-excel-poi</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
+            <groupId>com.github.pjfanning</groupId>
+            <artifactId>excel-streaming-reader</artifactId>
         </dependency>
     </dependencies>
 

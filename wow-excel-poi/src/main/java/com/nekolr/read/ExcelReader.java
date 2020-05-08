@@ -1,9 +1,9 @@
 package com.nekolr.read;
 
-import com.nekolr.exception.ExcelReadInitException;
 import com.nekolr.metadata.ExcelListener;
 import com.nekolr.metadata.ExcelReadResultListener;
 import com.nekolr.read.listener.ExcelReadListener;
+import com.nekolr.read.processor.DefaultExcelReadProcessor;
 import com.nekolr.read.processor.ExcelReadProcessor;
 
 import java.io.IOException;
@@ -42,7 +42,8 @@ public class ExcelReader<R> {
         for (ExcelReadProcessor<R> processor : processors) {
             return processor;
         }
-        throw new ExcelReadInitException("Unable to find the read processor");
+        // 在找不到其他处理器的情况下返回默认的处理器
+        return new DefaultExcelReadProcessor<>();
     }
 
     /**
@@ -141,6 +142,16 @@ public class ExcelReader<R> {
      */
     public ExcelReader<R> subscribe(ExcelReadResultListener<R> resultListener) {
         this.readContext.setReadResultListener(resultListener);
+        return this;
+    }
+
+    /**
+     * 使用流式 reader
+     *
+     * @return ExcelReader
+     */
+    public ExcelReader<R> enableStreamingReader() {
+        this.readContext.setStreamingReaderEnabled(true);
         return this;
     }
 
