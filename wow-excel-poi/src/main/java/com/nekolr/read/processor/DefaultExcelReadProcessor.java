@@ -123,7 +123,7 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
     private Object handleEmpty(ExcelReadContext<R> readContext, ExcelField excelField, int rowNum, int colNum) {
         List<ExcelListener> emptyReadListeners = readContext.getReadListenerCache().get(ExcelEmptyReadListener.class);
         if (emptyReadListeners == null) {
-            throw new ExcelReadInitException("If the field is not allowed empty, please specify a com.nekolr.listener that handles null value.");
+            throw new ExcelReadInitException("If the field is not allowed empty, please specify a listener that handles null value.");
         }
         return ExcelReadEventProcessor.afterReadEmptyCell(emptyReadListeners, excelField, rowNum, colNum);
     }
