@@ -34,9 +34,10 @@ public class Project {
 ```java
 public class Test {
     public static void main(String[] args) {
-        List<Project> list = WoWExcel.createReader("计划书.xls", Project.class)
+        List<Project> list = WoWExcel.createReaderBuilder("计划书.xls", Project.class)
                 .rowIndex(2)
                 .colIndex(1)
+                .build()
                 .readAndGet();
         list.forEach(System.out::println);
     }
@@ -82,9 +83,10 @@ public class Project {
 ```java
 public class Test {
     public static void main(String[] args) {
-        WoWExcel.createReader("计划书.xls", Project.class)
+        WoWExcel.createReaderBuilder("计划书.xls", Project.class)
                 .rowIndex(2)
                 .subscribe(list -> list.forEach(System.out::println))
+                .build()
                 .read();
     }
 }

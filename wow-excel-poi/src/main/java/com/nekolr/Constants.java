@@ -29,4 +29,9 @@ public class Constants {
      * 默认关闭流式 reader
      */
     public static final boolean STREAMING_READER_DISABLED = false;
+
+    /**
+     * 默认关闭读全部 sheets
+     */
+    public static final boolean ALL_SHEETS_DISABLED = false;
 }

@@ -1,9 +1,7 @@
 package com.nekolr;
 
-import com.nekolr.exception.ExcelReadInitException;
 import com.nekolr.metadata.Excel;
-import com.nekolr.read.ExcelReadContext;
-import com.nekolr.read.ExcelReader;
+import com.nekolr.read.builder.ExcelReaderBuilder;
 import com.nekolr.util.AnnotationUtils;
 
 import java.io.*;
@@ -14,47 +12,56 @@ import java.io.*;
 public class WoWExcel {
 
     /**
-     * 创建 ExcelReader
+     * 创建 ExcelReaderBuilder
      *
      * @param filepath   Excel 文件名称
      * @param excelClass 使用 Excel 注解的类
      * @param ignores    忽略的字段
      * @param <R>        使用 @Excel 注解的类类型
-     * @return ExcelReader
+     * @return ExcelReaderBuilder
      */
-    public static <R> ExcelReader<R> createReader(String filepath, Class<R> excelClass, String... ignores) {
-        return createReader(new File(filepath), excelClass, ignores);
+    public static <R> ExcelReaderBuilder<R> createReaderBuilder(String filepath, Class<R> excelClass, String... ignores) {
+        Excel excel = AnnotationUtils.toBean(excelClass, ignores);
+        ExcelReaderBuilder<R> excelReaderBuilder = new ExcelReaderBuilder<>();
+        excelReaderBuilder.file(filepath);
+        excelReaderBuilder.of(excelClass);
+        excelReaderBuilder.metadata(excel);
+        return excelReaderBuilder;
     }
 
     /**
-     * 创建 ExcelReader
+     * 创建 ExcelReaderBuilder
      *
      * @param file       Excel 文件
      * @param excelClass 使用 Excel 注解的类
      * @param ignores    忽略的字段
      * @param <R>        使用 @Excel 注解的类类型
-     * @return ExcelReader
+     * @return ExcelReaderBuilder
      */
-    public static <R> ExcelReader<R> createReader(File file, Class<R> excelClass, String... ignores) {
-        try {
-            return createReader(new FileInputStream(file), excelClass, ignores);
-        } catch (FileNotFoundException e) {
-            throw new ExcelReadInitException("Create excel reader error: " + e.getMessage());
-        }
+    public static <R> ExcelReaderBuilder<R> createReaderBuilder(File file, Class<R> excelClass, String... ignores) {
+        Excel excel = AnnotationUtils.toBean(excelClass, ignores);
+        ExcelReaderBuilder<R> excelReaderBuilder = new ExcelReaderBuilder<>();
+        excelReaderBuilder.file(file);
+        excelReaderBuilder.of(excelClass);
+        excelReaderBuilder.metadata(excel);
+        return excelReaderBuilder;
     }
 
     /**
-     * 创建 ExcelReader
+     * 创建 ExcelReaderBuilder
      *
      * @param inputStream Excel 输入流
      * @param excelClass  使用 Excel 注解的类
      * @param ignores     忽略的字段
      * @param <R>         使用 @Excel 注解的类类型
-     * @return ExcelReader
+     * @return ExcelReaderBuilder
      */
-    public static <R> ExcelReader<R> createReader(InputStream inputStream, Class<R> excelClass, String... ignores) {
+    public static <R> ExcelReaderBuilder<R> createReaderBuilder(InputStream inputStream, Class<R> excelClass, String... ignores) {
         Excel excel = AnnotationUtils.toBean(excelClass, ignores);
-        ExcelReadContext<R> readContext = new ExcelReadContext<>(inputStream, excelClass, excel);
-        return new ExcelReader<>(readContext);
+        ExcelReaderBuilder<R> excelReaderBuilder = new ExcelReaderBuilder<>();
+        excelReaderBuilder.file(inputStream);
+        excelReaderBuilder.of(excelClass);
+        excelReaderBuilder.metadata(excel);
+        return excelReaderBuilder;
     }
 }

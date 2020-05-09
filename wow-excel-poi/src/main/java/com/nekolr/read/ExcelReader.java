@@ -1,13 +1,12 @@
 package com.nekolr.read;
 
-import com.nekolr.metadata.ExcelListener;
-import com.nekolr.metadata.ExcelReadResultListener;
-import com.nekolr.read.listener.ExcelReadListener;
 import com.nekolr.read.processor.DefaultExcelReadProcessor;
 import com.nekolr.read.processor.ExcelReadProcessor;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ServiceLoader;
 
 /**
  * ExcelReader
@@ -44,115 +43,6 @@ public class ExcelReader<R> {
         }
         // 在找不到其他处理器的情况下返回默认的处理器
         return new DefaultExcelReadProcessor<>();
-    }
-
-    /**
-     * 设置文档密码
-     *
-     * @param password 密码
-     * @return ExcelReader
-     */
-    public ExcelReader<R> password(String password) {
-        this.readContext.setPassword(password);
-        return this;
-    }
-
-    /**
-     * 设置 sheet 名称
-     *
-     * @param sheetName sheet 名称
-     * @return ExcelReader
-     */
-    public ExcelReader<R> sheetName(String sheetName) {
-        this.readContext.setSheetName(sheetName);
-        return this;
-    }
-
-    /**
-     * 设置 sheet 坐标
-     *
-     * @param sheetAt sheet 坐标
-     * @return ExcelReader
-     */
-    public ExcelReader<R> sheetAt(Integer sheetAt) {
-        if (sheetAt < 0) {
-            throw new IllegalArgumentException("Sheet index must be greater than or equal to 0");
-        }
-        this.readContext.setSheetAt(sheetAt);
-        return this;
-    }
-
-    /**
-     * 设置数据起始行号
-     * <p>
-     * 是数据开始的行号，不是表头开始的行号
-     *
-     * @param rowIndex 数据起始行号
-     * @return ExcelReader
-     */
-    public ExcelReader<R> rowIndex(int rowIndex) {
-        if (rowIndex < 0) {
-            throw new IllegalArgumentException("Row index must be greater than or equal to 0");
-        }
-        this.readContext.setRowIndex(rowIndex);
-        return this;
-    }
-
-    /**
-     * 设置数据起始列号
-     *
-     * @param colIndex 数据起始行号
-     * @return ExcelReader
-     */
-    public ExcelReader<R> colIndex(int colIndex) {
-        if (colIndex < 0) {
-            throw new IllegalArgumentException("column index must be greater than or equal to 0");
-        }
-        this.readContext.setColIndex(colIndex);
-        return this;
-    }
-
-    /**
-     * 设置读监听器
-     *
-     * @param readListener 读监听器
-     * @return ExcelReader
-     */
-    public ExcelReader<R> listener(ExcelListener readListener) {
-        this.readContext.addListener(readListener);
-        return this;
-    }
-
-    /**
-     * 设置读监听器集合
-     *
-     * @param readListeners 读监听器集合
-     * @return ExcelReader
-     */
-    public ExcelReader<R> listeners(ExcelReadListener<R>[] readListeners) {
-        Arrays.stream(readListeners).forEach(this.readContext::addListener);
-        return this;
-    }
-
-    /**
-     * 订阅结果
-     *
-     * @param resultListener 读结果监听器
-     * @return ExcelReader
-     */
-    public ExcelReader<R> subscribe(ExcelReadResultListener<R> resultListener) {
-        this.readContext.setReadResultListener(resultListener);
-        return this;
-    }
-
-    /**
-     * 使用流式 reader
-     *
-     * @return ExcelReader
-     */
-    public ExcelReader<R> enableStreamingReader() {
-        this.readContext.setStreamingReaderEnabled(true);
-        return this;
     }
 
     /**

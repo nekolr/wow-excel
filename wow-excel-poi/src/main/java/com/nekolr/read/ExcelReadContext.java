@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +36,11 @@ public class ExcelReadContext<R> {
     private Integer sheetAt;
 
     /**
+     * 是否读所有的 sheet，默认否
+     */
+    private boolean allSheets = Constants.ALL_SHEETS_DISABLED;
+
+    /**
      * 数据的行号（是数据开始的行号，不是表头开始的行号）
      */
     private int rowIndex = Constants.DEFAULT_ROW_INDEX;
@@ -50,12 +56,19 @@ public class ExcelReadContext<R> {
     private Workbook workbook;
 
     /**
+     * Excel 文件
+     * <p>
+     * 如果输入流和文件都不为空，优先使用文件
+     */
+    private File file;
+
+    /**
      * Excel 输入流
      */
     private InputStream inputStream;
 
     /**
-     * 是否使用流式 reader
+     * 是否使用流式 reader，默认否
      */
     private boolean streamingReaderEnabled = Constants.STREAMING_READER_DISABLED;
 
@@ -94,10 +107,7 @@ public class ExcelReadContext<R> {
     private Map<Class<? extends DataConverter>, DataConverter> converterCache = new HashMap<>();
 
 
-    public ExcelReadContext(InputStream inputStream, Class<R> excelClass, Excel excel) {
-        this.inputStream = inputStream;
-        this.excelClass = excelClass;
-        this.excel = excel;
+    public ExcelReadContext() {
         // 添加默认的数据转换器
         this.converterCache.put(DefaultDataConverter.class, new DefaultDataConverter());
     }

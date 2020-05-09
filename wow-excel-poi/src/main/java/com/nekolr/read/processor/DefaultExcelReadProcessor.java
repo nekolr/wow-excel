@@ -31,30 +31,16 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
     @Override
     public void init(ExcelReadContext<R> readContext) {
         this.readContext = readContext;
-        if (readContext.getWorkbook() == null) {
-            Workbook workbook;
-            try {
-                workbook = WorkbookFactory.create(this.readContext.getInputStream(), this.readContext.getPassword());
-                this.readContext.setWorkbook(workbook);
-            } catch (Exception e) {
-                throw new ExcelReadException(e.getMessage());
-            }
-        }
+        this.createWorkbook(this.readContext);
     }
 
     @Override
     public void read() {
-        Sheet sheet;
-        String sheetName = this.readContext.getSheetName();
-        Integer sheetAt = this.readContext.getSheetAt();
-        if (sheetName != null) {
-            sheet = this.readContext.getWorkbook().getSheet(sheetName);
-        } else if (sheetAt != null) {
-            sheet = this.readContext.getWorkbook().getSheetAt(sheetAt);
+        if (this.readContext.isAllSheets()) {
+            this.readAllSheets();
         } else {
-            sheet = this.readContext.getWorkbook().getSheetAt(Constants.DEFAULT_SHEET_AT);
+            this.readSheet();
         }
-        this.doRead(sheet);
     }
 
     /**
@@ -161,5 +147,57 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
             }
         }
         return dataConverter;
+    }
+
+    /**
+     * 创建 workbook
+     *
+     * @param readContext 读上下文
+     * @return Workbook
+     */
+    private Workbook createWorkbook(ExcelReadContext<R> readContext) {
+        Workbook workbook = readContext.getWorkbook();
+        if (workbook == null) {
+            if (readContext.getFile() != null) {
+                try {
+                    workbook = WorkbookFactory.create(readContext.getFile(), readContext.getPassword());
+                    readContext.setWorkbook(workbook);
+                } catch (Exception e) {
+                    throw new ExcelReadException(e.getMessage());
+                }
+            } else {
+                try {
+                    workbook = WorkbookFactory.create(readContext.getInputStream(), readContext.getPassword());
+                    readContext.setWorkbook(workbook);
+                } catch (Exception e) {
+                    throw new ExcelReadException(e.getMessage());
+                }
+            }
+        }
+        return workbook;
+    }
+
+    /**
+     * 读所有的 sheets
+     */
+    private void readAllSheets() {
+        for (Sheet sheet : this.readContext.getWorkbook()) {
+            this.doRead(sheet);
+        }
+    }
+
+    /**
+     * 读指定的 sheet
+     */
+    private void readSheet() {
+        Sheet sheet;
+        if (this.readContext.getSheetName() != null) {
+            sheet = this.readContext.getWorkbook().getSheet(this.readContext.getSheetName());
+        } else if (this.readContext.getSheetAt() != null) {
+            sheet = this.readContext.getWorkbook().getSheetAt(this.readContext.getSheetAt());
+        } else {
+            sheet = this.readContext.getWorkbook().getSheetAt(Constants.DEFAULT_SHEET_AT);
+        }
+        this.doRead(sheet);
     }
 }
