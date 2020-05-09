@@ -11,4 +11,12 @@ public class ExcelReadInitException extends ExcelReadException {
     public ExcelReadInitException(String message) {
         super(message);
     }
+
+    public ExcelReadInitException(Throwable cause) {
+        super(cause);
+    }
+
+    public ExcelReadInitException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

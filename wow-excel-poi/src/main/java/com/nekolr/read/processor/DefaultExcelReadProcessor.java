@@ -163,14 +163,14 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
                     workbook = WorkbookFactory.create(readContext.getFile(), readContext.getPassword());
                     readContext.setWorkbook(workbook);
                 } catch (Exception e) {
-                    throw new ExcelReadException(e.getMessage());
+                    throw new ExcelReadException("Can not read this workbook: " + e.getMessage(), e);
                 }
             } else {
                 try {
                     workbook = WorkbookFactory.create(readContext.getInputStream(), readContext.getPassword());
                     readContext.setWorkbook(workbook);
                 } catch (Exception e) {
-                    throw new ExcelReadException(e.getMessage());
+                    throw new ExcelReadException("Can not read this workbook: " + e.getMessage(), e);
                 }
             }
         }

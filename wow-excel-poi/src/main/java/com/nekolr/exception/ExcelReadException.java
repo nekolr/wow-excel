@@ -12,4 +12,12 @@ public class ExcelReadException extends RuntimeException {
     public ExcelReadException(String message) {
         super(message);
     }
+
+    public ExcelReadException(Throwable cause) {
+        super(cause);
+    }
+
+    public ExcelReadException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
