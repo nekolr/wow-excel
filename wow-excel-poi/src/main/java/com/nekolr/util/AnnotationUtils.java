@@ -54,6 +54,8 @@ public class AnnotationUtils {
         excelBean.setRowCacheSize(excel.rowCacheSize());
         excelBean.setBufferSize(excel.bufferSize());
         excelBean.setFieldList(excelFieldList);
+        excelBean.setUseSstTempFile(excel.useSstTempFile());
+        excelBean.setEncryptSstTempFile(excel.encryptSstTempFile());
         return excelBean;
     }
 }
