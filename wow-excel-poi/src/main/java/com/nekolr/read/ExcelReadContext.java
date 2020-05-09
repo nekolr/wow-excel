@@ -41,6 +41,11 @@ public class ExcelReadContext<R> {
     private boolean allSheets = Constants.ALL_SHEETS_DISABLED;
 
     /**
+     * 是否保存读取的结果，默认保存
+     */
+    private boolean saveResult = Constants.SAVE_RESULT_ENABLED;
+
+    /**
      * 数据的行号（是数据开始的行号，不是表头开始的行号）
      */
     private int rowIndex = Constants.DEFAULT_ROW_INDEX;

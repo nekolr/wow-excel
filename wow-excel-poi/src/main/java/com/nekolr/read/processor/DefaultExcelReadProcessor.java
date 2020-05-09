@@ -36,11 +36,14 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
 
     @Override
     public void read() {
+        List<R> resultList;
         if (this.readContext.isAllSheets()) {
-            this.readAllSheets();
+            resultList = this.readAllSheets();
         } else {
-            this.readSheet();
+            resultList = this.readSheet();
         }
+        // Event: 所有要求的任务都执行完毕后触发，结果通知
+        ExcelReadEventProcessor.resultNotify(this.readContext.getReadResultListener(), resultList);
     }
 
     /**
@@ -48,7 +51,7 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
      *
      * @param sheet worksheet
      */
-    private void doRead(Sheet sheet) {
+    private List<R> doRead(Sheet sheet) {
         List<ExcelListener> readListeners = this.readContext.getReadListenerCache().get(ExcelReadListener.class);
         // Event: 开始读之前触发
         ExcelReadEventProcessor.beforeReadSheet(readListeners, this.readContext);
@@ -56,10 +59,16 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
         List<ExcelField> excelFieldList = excel.getFieldList();
         int actualRowIndex = this.readContext.getRowIndex();
         int colIndex = this.readContext.getColIndex();
+        boolean saveResult = this.readContext.isSaveResult();
         R r;
         Object cellValue;
         boolean isStop = false;
-        List<R> resultList = new ArrayList<>(sheet.getLastRowNum());
+        List<R> resultList;
+        if (saveResult) {
+            resultList = new ArrayList<>(sheet.getLastRowNum());
+        } else {
+            resultList = new ArrayList<>(0);
+        }
         for (Row row : sheet) {
             if (isStop) {
                 break;
@@ -103,13 +112,12 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
                 // Event: 读行结束后触发
                 isStop = ExcelReadEventProcessor.afterReadRow(readListeners, r, row.getRowNum());
                 // 将结果放入集合
-                resultList.add(r);
+                if (saveResult) resultList.add(r);
             }
         }
         // Event: sheet 读取完毕后触发
         ExcelReadEventProcessor.afterReadSheet(readListeners, this.readContext);
-        // Event: sheet 读取完毕后触发，结果通知
-        ExcelReadEventProcessor.resultNotify(this.readContext.getReadResultListener(), resultList);
+        return resultList;
     }
 
     /**
@@ -179,17 +187,23 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
 
     /**
      * 读所有的 sheets
+     *
+     * @return 结果集合
      */
-    private void readAllSheets() {
+    private List<R> readAllSheets() {
+        List<R> resultList = new ArrayList<>();
         for (Sheet sheet : this.readContext.getWorkbook()) {
-            this.doRead(sheet);
+            resultList.addAll(this.doRead(sheet));
         }
+        return resultList;
     }
 
     /**
      * 读指定的 sheet
+     *
+     * @return 结果结合
      */
-    private void readSheet() {
+    private List<R> readSheet() {
         Sheet sheet;
         if (this.readContext.getSheetName() != null) {
             sheet = this.readContext.getWorkbook().getSheet(this.readContext.getSheetName());
@@ -198,6 +212,6 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
         } else {
             sheet = this.readContext.getWorkbook().getSheetAt(Constants.DEFAULT_SHEET_AT);
         }
-        this.doRead(sheet);
+        return this.doRead(sheet);
     }
 }

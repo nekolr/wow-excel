@@ -203,6 +203,17 @@ public class ExcelReaderBuilder<R> {
     }
 
     /**
+     * 设置是否保存读取结果，在数据量大时推荐关闭
+     *
+     * @param isSave 是否保存读取结果
+     * @return ExcelReaderBuilder
+     */
+    public ExcelReaderBuilder<R> saveResult(boolean isSave) {
+        this.readContext.setSaveResult(isSave);
+        return this;
+    }
+
+    /**
      * 构建
      *
      * @return ExcelReader

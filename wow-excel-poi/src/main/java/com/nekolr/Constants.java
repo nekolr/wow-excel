@@ -34,4 +34,9 @@ public class Constants {
      * 默认关闭读全部 sheets
      */
     public static final boolean ALL_SHEETS_DISABLED = false;
+
+    /**
+     * 默认保存读取的结果
+     */
+    public static final boolean SAVE_RESULT_ENABLED = true;
 }
