@@ -50,7 +50,7 @@ public class AnnotationUtils {
 
         com.nekolr.metadata.Excel excelBean = new com.nekolr.metadata.Excel();
         excelBean.setExcelName(excel.value());
-        excelBean.setExcelType(excel.type());
+        excelBean.setWorkbookType(excel.type());
         excelBean.setRowCacheSize(excel.rowCacheSize());
         excelBean.setBufferSize(excel.bufferSize());
         excelBean.setFieldList(excelFieldList);

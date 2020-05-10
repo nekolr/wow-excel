@@ -55,25 +55,25 @@ public class Test {
 @ToString
 public class Project {
 
-    @ExcelField(value = "项目")
+    @ExcelField("项目")
     private String project;
 
-    @ExcelField(value = "负责人")
+    @ExcelField("负责人")
     private String manager;
 
-    @ExcelField(value = "立项时间")
+    @ExcelField("立项时间")
     private Date date;
 
-    @ExcelField(value = "一季度")
+    @ExcelField("年度预算#一季度")
     private Double q1;
 
-    @ExcelField(value = "二季度")
+    @ExcelField("年度预算#二季度")
     private Double q2;
 
-    @ExcelField(value = "三季度")
+    @ExcelField("年度预算#三季度")
     private Double q3;
 
-    @ExcelField(value = "四季度")
+    @ExcelField("年度预算#四季度")
     private Double q4;
 }
 ```

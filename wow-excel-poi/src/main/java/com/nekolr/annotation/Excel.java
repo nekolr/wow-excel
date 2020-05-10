@@ -1,6 +1,6 @@
 package com.nekolr.annotation;
 
-import com.nekolr.enums.ExcelType;
+import com.nekolr.enums.WorkbookType;
 
 import java.lang.annotation.*;
 
@@ -23,9 +23,16 @@ public @interface Excel {
      * Excel 类型
      *
      * @return Excel 文件类型
-     * @see ExcelType
+     * @see WorkbookType
      */
-    ExcelType type() default ExcelType.XLS;
+    WorkbookType type() default WorkbookType.XLS;
+
+    /**
+     * 表头标题分隔符号（用于多级表头）
+     *
+     * @return 表头标题分隔符号
+     */
+    String titleSeparator() default "#";
 
     /**
      * 加载到并常驻内存中的数据行数

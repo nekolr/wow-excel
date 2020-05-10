@@ -1,6 +1,6 @@
 package com.nekolr.metadata;
 
-import com.nekolr.enums.ExcelType;
+import com.nekolr.enums.WorkbookType;
 import lombok.Data;
 
 import java.util.List;
@@ -19,9 +19,9 @@ public class Excel {
     /**
      * Excel 类型
      *
-     * @see ExcelType
+     * @see WorkbookType
      */
-    private ExcelType excelType;
+    private WorkbookType workbookType;
 
     /**
      * 字段列表
