@@ -54,11 +54,10 @@ public class ExcelReadEventProcessor {
      * @param field         单元格对应的表头字段的元数据
      * @param rowNum        所在行
      * @param colNum        所在列
-     * @param <R>           使用 @Excel 注解的类类型
      * @return 处理后的单元格值
      */
-    public static <R> Object afterReadEmptyCell(List<ExcelListener> readListeners, ExcelField field,
-                                                int rowNum, int colNum) {
+    public static Object afterReadEmptyCell(List<ExcelListener> readListeners, ExcelField field,
+                                            int rowNum, int colNum) {
         Object cellValue = null;
         if (readListeners != null) {
             for (ExcelListener readListener : readListeners) {
