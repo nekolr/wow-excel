@@ -19,12 +19,17 @@ public class ExcelStreamReadProcessor<R> extends DefaultExcelReadProcessor<R> {
         Excel excel = readContext.getExcel();
         if (readContext.isStreamingReaderEnabled()) {
             if (excel.getWorkbookType().equals(WorkbookType.XLSX)) {
-                Workbook workbook = StreamingReader.builder()
+                Workbook workbook;
+                StreamingReader.Builder builder = StreamingReader.builder()
                         .bufferSize(excel.getRowCacheSize())
                         .bufferSize(excel.getBufferSize())
                         .setUseSstTempFile(excel.isUseSstTempFile())
-                        .setEncryptSstTempFile(excel.isEncryptSstTempFile())
-                        .open(readContext.getInputStream());
+                        .setEncryptSstTempFile(excel.isEncryptSstTempFile());
+                if (readContext.getFile() != null) {
+                    workbook = builder.open(readContext.getFile());
+                } else {
+                    workbook = builder.open(readContext.getInputStream());
+                }
                 readContext.setWorkbook(workbook);
             }
         }
