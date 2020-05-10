@@ -80,34 +80,36 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
                     throw new ExcelReadInitException("Excel entity init failure: " + e.getMessage());
                 }
                 for (int col = 0; col < excelFieldList.size(); col++) {
-                    Field field = excelFieldList.get(col).getField();
-                    Cell cell = row.getCell(colIndex + col);
                     ExcelField excelField = excelFieldList.get(col);
-                    DataConverter dataConverter = this.getDataConverter(excelField);
-                    if (cell != null) {
-                        cellValue = ExcelUtils.getCellValue(cell, excelField, field);
-                        if (cellValue != null) {
-                            // Event: 读单元格结束后触发
-                            cellValue = ExcelReadEventProcessor.afterReadCell(readListeners, excelField, cellValue, row.getRowNum(), col);
-                            // 使用转换器转换结果
-                            cellValue = ExcelUtils.useReadConverter(cellValue, excelField, dataConverter);
+                    if (!excelField.isIgnore()) {
+                        Field field = excelFieldList.get(col).getField();
+                        Cell cell = row.getCell(colIndex + col);
+                        DataConverter dataConverter = this.getDataConverter(excelField);
+                        if (cell != null) {
+                            cellValue = ExcelUtils.getCellValue(cell, excelField, field);
+                            if (cellValue != null) {
+                                // Event: 读单元格结束后触发
+                                cellValue = ExcelReadEventProcessor.afterReadCell(readListeners, excelField, cellValue, row.getRowNum(), col);
+                                // 使用转换器转换结果
+                                cellValue = ExcelUtils.useReadConverter(cellValue, excelField, dataConverter);
+                            } else {
+                                // 单元格值为空
+                                if (!excelField.isAllowEmpty()) {
+                                    // 如果字段不允许空值，那么需要用户通过监听器来自己处理空值
+                                    cellValue = this.handleEmpty(this.readContext, excelField, row.getRowNum(), col);
+                                }
+                            }
                         } else {
-                            // 单元格值为空
+                            // 单元格不存在
                             if (!excelField.isAllowEmpty()) {
-                                // 如果字段不允许空值，那么需要用户通过监听器来自己处理空值
                                 cellValue = this.handleEmpty(this.readContext, excelField, row.getRowNum(), col);
+                            } else {
+                                cellValue = null;
                             }
                         }
-                    } else {
-                        // 单元格不存在
-                        if (!excelField.isAllowEmpty()) {
-                            cellValue = this.handleEmpty(this.readContext, excelField, row.getRowNum(), col);
-                        } else {
-                            cellValue = null;
-                        }
+                        // 设置字段的值
+                        BeanUtils.setFieldValue(r, field, cellValue);
                     }
-                    // 设置字段的值
-                    BeanUtils.setFieldValue(r, field, cellValue);
                 }
                 // Event: 读行结束后触发
                 isStop = ExcelReadEventProcessor.afterReadRow(readListeners, r, row.getRowNum());
