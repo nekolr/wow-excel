@@ -1,18 +1,17 @@
 package com.nekolr.read.builder;
 
 import com.nekolr.metadata.Excel;
-import com.nekolr.metadata.ExcelListener;
 import com.nekolr.metadata.ExcelReadResultListener;
 import com.nekolr.read.ExcelReadContext;
 import com.nekolr.read.ExcelReader;
-import com.nekolr.read.listener.ExcelReadListener;
+import com.nekolr.read.listener.*;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 
 /**
- * ExcelReaderBuilder
+ * ExcelReader 建造者
  *
  * @param <R> 使用 @Excel 注解的类类型
  */
@@ -150,23 +149,89 @@ public class ExcelReaderBuilder<R> {
     }
 
     /**
-     * 设置读监听器
+     * 设置读 sheet 监听器
      *
      * @param readListener 读监听器
      * @return ExcelReaderBuilder
      */
-    public ExcelReaderBuilder<R> listener(ExcelListener readListener) {
+    public ExcelReaderBuilder<R> sheetListener(ExcelSheetReadListener<R> readListener) {
         this.readContext.addListener(readListener);
         return this;
     }
 
     /**
-     * 设置读监听器集合
+     * 设置读 sheet 监听器集合
      *
      * @param readListeners 读监听器集合
      * @return ExcelReaderBuilder
      */
-    public ExcelReaderBuilder<R> listeners(ExcelReadListener<R>[] readListeners) {
+    public ExcelReaderBuilder<R> sheetListeners(ExcelSheetReadListener<R>[] readListeners) {
+        Arrays.stream(readListeners).forEach(this.readContext::addListener);
+        return this;
+    }
+
+    /**
+     * 设置读行监听器
+     *
+     * @param readListener 读监听器
+     * @return ExcelReaderBuilder
+     */
+    public ExcelReaderBuilder<R> rowListener(ExcelRowReadListener<R> readListener) {
+        this.readContext.addListener(readListener);
+        return this;
+    }
+
+    /**
+     * 设置读行监听器集合
+     *
+     * @param readListeners 读监听器集合
+     * @return ExcelReaderBuilder
+     */
+    public ExcelReaderBuilder<R> rowListeners(ExcelRowReadListener<R>[] readListeners) {
+        Arrays.stream(readListeners).forEach(this.readContext::addListener);
+        return this;
+    }
+
+    /**
+     * 设置读单元格监听器
+     *
+     * @param readListener 读监听器
+     * @return ExcelReaderBuilder
+     */
+    public ExcelReaderBuilder<R> cellListener(ExcelCellReadListener readListener) {
+        this.readContext.addListener(readListener);
+        return this;
+    }
+
+    /**
+     * 设置读单元格监听器集合
+     *
+     * @param readListeners 读监听器集合
+     * @return ExcelReaderBuilder
+     */
+    public ExcelReaderBuilder<R> cellListeners(ExcelCellReadListener[] readListeners) {
+        Arrays.stream(readListeners).forEach(this.readContext::addListener);
+        return this;
+    }
+
+    /**
+     * 设置读空单元格监听器
+     *
+     * @param readListener 读监听器
+     * @return ExcelReaderBuilder
+     */
+    public ExcelReaderBuilder<R> emptyCellListener(ExcelEmptyCellReadListener readListener) {
+        this.readContext.addListener(readListener);
+        return this;
+    }
+
+    /**
+     * 设置读空单元格监听器集合
+     *
+     * @param readListeners 读监听器集合
+     * @return ExcelReaderBuilder
+     */
+    public ExcelReaderBuilder<R> emptyCellListeners(ExcelEmptyCellReadListener[] readListeners) {
         Arrays.stream(readListeners).forEach(this.readContext::addListener);
         return this;
     }

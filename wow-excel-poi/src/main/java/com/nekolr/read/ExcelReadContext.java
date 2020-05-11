@@ -3,8 +3,7 @@ package com.nekolr.read;
 import com.nekolr.Constants;
 import com.nekolr.convert.DefaultDataConverter;
 import com.nekolr.metadata.*;
-import com.nekolr.read.listener.ExcelEmptyReadListener;
-import com.nekolr.read.listener.ExcelReadListener;
+import com.nekolr.read.listener.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -97,9 +96,24 @@ public class ExcelReadContext<R> {
     private Excel excel;
 
     /**
-     * 读监听器集合
+     * 读 sheet 监听器集合
      */
-    private Map<Class<? extends ExcelListener>, List<ExcelListener>> readListenerCache = new HashMap<>();
+    private List<ExcelSheetReadListener<R>> sheetReadListeners = new ArrayList<>();
+
+    /**
+     * 读行监听器集合
+     */
+    private List<ExcelRowReadListener<R>> rowReadListeners = new ArrayList<>();
+
+    /**
+     * 读单元格监听器集合
+     */
+    private List<ExcelCellReadListener> cellReadListeners = new ArrayList<>();
+
+    /**
+     * 读空单元格监听器集合
+     */
+    private List<ExcelEmptyCellReadListener> emptyCellReadListeners = new ArrayList<>();
 
     /**
      * 结果监听器
@@ -123,14 +137,18 @@ public class ExcelReadContext<R> {
      * @param readListener 读监听器
      * @return 读上下文
      */
-    public ExcelReadContext<R> addListener(ExcelListener readListener) {
-        if (readListener instanceof ExcelReadListener) {
-            List<ExcelListener> list = this.readListenerCache.computeIfAbsent(ExcelReadListener.class, k -> new ArrayList<>());
-            list.add(readListener);
+    public ExcelReadContext<R> addListener(ExcelReadListener readListener) {
+        if (readListener instanceof ExcelSheetReadListener) {
+            this.sheetReadListeners.add((ExcelSheetReadListener<R>) readListener);
         }
-        if (readListener instanceof ExcelEmptyReadListener) {
-            List<ExcelListener> list = this.readListenerCache.computeIfAbsent(ExcelEmptyReadListener.class, k -> new ArrayList<>());
-            list.add(readListener);
+        if (readListener instanceof ExcelRowReadListener) {
+            this.rowReadListeners.add((ExcelRowReadListener<R>) readListener);
+        }
+        if (readListener instanceof ExcelCellReadListener) {
+            this.cellReadListeners.add((ExcelCellReadListener) readListener);
+        }
+        if (readListener instanceof ExcelEmptyCellReadListener) {
+            this.emptyCellReadListeners.add((ExcelEmptyCellReadListener) readListener);
         }
         return this;
     }

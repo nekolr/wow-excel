@@ -5,9 +5,8 @@ import com.nekolr.exception.ExcelReadInitException;
 import com.nekolr.exception.ExcelReadException;
 import com.nekolr.metadata.*;
 import com.nekolr.read.ExcelReadContext;
-import com.nekolr.read.listener.ExcelEmptyReadListener;
+import com.nekolr.read.listener.ExcelEmptyCellReadListener;
 import com.nekolr.read.listener.ExcelReadEventProcessor;
-import com.nekolr.read.listener.ExcelReadListener;
 import com.nekolr.util.BeanUtils;
 import com.nekolr.util.ExcelUtils;
 import org.apache.poi.ss.usermodel.*;
@@ -52,9 +51,8 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
      * @param sheet worksheet
      */
     private List<R> doRead(Sheet sheet) {
-        List<ExcelListener> readListeners = this.readContext.getReadListenerCache().get(ExcelReadListener.class);
         // Event: 开始读之前触发
-        ExcelReadEventProcessor.beforeReadSheet(readListeners, this.readContext);
+        ExcelReadEventProcessor.beforeReadSheet(this.readContext.getSheetReadListeners(), this.readContext);
         Excel excel = this.readContext.getExcel();
         List<ExcelField> excelFieldList = excel.getFieldList();
         int actualRowIndex = this.readContext.getRowIndex();
@@ -89,7 +87,7 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
                             cellValue = ExcelUtils.getCellValue(cell, excelField, field);
                             if (cellValue != null) {
                                 // Event: 读单元格结束后触发
-                                cellValue = ExcelReadEventProcessor.afterReadCell(readListeners, excelField, cellValue, row.getRowNum(), col);
+                                cellValue = ExcelReadEventProcessor.afterReadCell(this.readContext.getCellReadListeners(), excelField, cellValue, row.getRowNum(), col);
                                 // 使用转换器转换结果
                                 cellValue = ExcelUtils.useReadConverter(cellValue, excelField, dataConverter);
                             } else {
@@ -112,13 +110,13 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
                     }
                 }
                 // Event: 读行结束后触发
-                isStop = ExcelReadEventProcessor.afterReadRow(readListeners, r, row.getRowNum());
+                isStop = ExcelReadEventProcessor.afterReadRow(this.readContext.getRowReadListeners(), r, row.getRowNum());
                 // 将结果放入集合
                 if (saveResult) resultList.add(r);
             }
         }
         // Event: sheet 读取完毕后触发
-        ExcelReadEventProcessor.afterReadSheet(readListeners, this.readContext);
+        ExcelReadEventProcessor.afterReadSheet(this.readContext.getSheetReadListeners(), this.readContext);
         return resultList;
     }
 
@@ -131,7 +129,7 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
      * @param colNum      列号
      */
     private Object handleEmpty(ExcelReadContext<R> readContext, ExcelField excelField, int rowNum, int colNum) {
-        List<ExcelListener> emptyReadListeners = readContext.getReadListenerCache().get(ExcelEmptyReadListener.class);
+        List<ExcelEmptyCellReadListener> emptyReadListeners = readContext.getEmptyCellReadListeners();
         if (emptyReadListeners == null) {
             throw new ExcelReadInitException("If the field is not allowed empty, please specify a listener that handles null value.");
         }

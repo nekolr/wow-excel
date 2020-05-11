@@ -1,7 +1,6 @@
 package com.nekolr.read.listener;
 
 import com.nekolr.metadata.ExcelField;
-import com.nekolr.metadata.ExcelListener;
 import com.nekolr.metadata.ExcelReadResultListener;
 import com.nekolr.read.ExcelReadContext;
 
@@ -19,9 +18,9 @@ public class ExcelReadEventProcessor {
      * @param readContext   读上下文
      * @param <R>           使用 @Excel 注解的类类型
      */
-    public static <R> void beforeReadSheet(List<ExcelListener> readListeners, ExcelReadContext<R> readContext) {
+    public static <R> void beforeReadSheet(List<ExcelSheetReadListener<R>> readListeners, ExcelReadContext<R> readContext) {
         if (readListeners != null) {
-            readListeners.forEach(listener -> ((ExcelReadListener<R>) listener).beforeReadSheet(readContext));
+            readListeners.forEach(listener -> listener.beforeReadSheet(readContext));
         }
     }
 
@@ -33,19 +32,17 @@ public class ExcelReadEventProcessor {
      * @param cellValue     单元格值
      * @param rowNum        行号
      * @param colNum        列号
-     * @param <R>           使用 @Excel 注解的类类型
      * @return 处理后的单元格值
      */
-    public static <R> Object afterReadCell(List<ExcelListener> readListeners, ExcelField field,
-                                           Object cellValue, int rowNum, int colNum) {
+    public static Object afterReadCell(List<ExcelCellReadListener> readListeners, ExcelField field,
+                                       Object cellValue, int rowNum, int colNum) {
         if (readListeners != null) {
-            for (ExcelListener readListener : readListeners) {
-                cellValue = ((ExcelReadListener<R>) readListener).afterReadCell(field, cellValue, rowNum, colNum);
+            for (ExcelCellReadListener readListener : readListeners) {
+                cellValue = readListener.afterReadCell(field, cellValue, rowNum, colNum);
             }
         }
         return cellValue;
     }
-
 
     /**
      * 在读一个空白单元格之后
@@ -56,12 +53,12 @@ public class ExcelReadEventProcessor {
      * @param colNum        所在列
      * @return 处理后的单元格值
      */
-    public static Object afterReadEmptyCell(List<ExcelListener> readListeners, ExcelField field,
+    public static Object afterReadEmptyCell(List<ExcelEmptyCellReadListener> readListeners, ExcelField field,
                                             int rowNum, int colNum) {
         Object cellValue = null;
         if (readListeners != null) {
-            for (ExcelListener readListener : readListeners) {
-                cellValue = ((ExcelEmptyReadListener) readListener).handleEmpty(field, rowNum, colNum);
+            for (ExcelEmptyCellReadListener readListener : readListeners) {
+                cellValue = readListener.handleEmpty(field, rowNum, colNum);
             }
         }
         return cellValue;
@@ -76,11 +73,11 @@ public class ExcelReadEventProcessor {
      * @param <R>           使用 @Excel 注解的类类型
      * @return 是否停止读
      */
-    public static <R> boolean afterReadRow(List<ExcelListener> readListeners, R r, int rowNum) {
+    public static <R> boolean afterReadRow(List<ExcelRowReadListener<R>> readListeners, R r, int rowNum) {
         boolean isStop = false;
         if (readListeners != null) {
-            for (ExcelListener readListener : readListeners) {
-                isStop = ((ExcelReadListener<R>) readListener).afterReadRow(r, rowNum);
+            for (ExcelRowReadListener<R> readListener : readListeners) {
+                isStop = readListener.afterReadRow(r, rowNum);
             }
         }
         return isStop;
@@ -93,9 +90,9 @@ public class ExcelReadEventProcessor {
      * @param readContext   Excel 读上下文
      * @param <R>           使用 @Excel 注解的类类型
      */
-    public static <R> void afterReadSheet(List<ExcelListener> readListeners, ExcelReadContext<R> readContext) {
+    public static <R> void afterReadSheet(List<ExcelSheetReadListener<R>> readListeners, ExcelReadContext<R> readContext) {
         if (readListeners != null) {
-            readListeners.forEach(listener -> ((ExcelReadListener<R>) listener).afterReadSheet(readContext));
+            readListeners.forEach(listener -> listener.afterReadSheet(readContext));
         }
     }
 
