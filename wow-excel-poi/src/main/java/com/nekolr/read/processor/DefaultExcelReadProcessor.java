@@ -12,7 +12,11 @@ import com.nekolr.util.ExcelUtils;
 import org.apache.poi.ss.usermodel.*;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -106,7 +110,7 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
                             }
                         }
                         // 设置字段的值
-                        BeanUtils.setFieldValue(r, field, cellValue);
+                        this.setFieldValue(r, field, cellValue);
                     }
                 }
                 // Event: 读行结束后触发
@@ -213,5 +217,28 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
             sheet = this.readContext.getWorkbook().getSheetAt(Constants.DEFAULT_SHEET_AT);
         }
         return this.doRead(sheet);
+    }
+
+    /**
+     * 设置字段的值
+     *
+     * @param r         实体对象
+     * @param field     字段
+     * @param cellValue 单元格的值
+     */
+    private void setFieldValue(R r, Field field, Object cellValue) {
+        if (field.getType() == LocalDate.class) {
+            BeanUtils.setFieldValue(r, field, LocalDateTime.ofInstant(((Date) cellValue).toInstant(), ZoneId.systemDefault()).toLocalDate());
+            return;
+        }
+        if (field.getType() == LocalDateTime.class) {
+            BeanUtils.setFieldValue(r, field, LocalDateTime.ofInstant(((Date) cellValue).toInstant(), ZoneId.systemDefault()));
+            return;
+        }
+        try {
+            BeanUtils.setFieldValue(r, field, cellValue);
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException("Unsupported data type, field: " + field.getName() + " value: " + cellValue);
+        }
     }
 }
