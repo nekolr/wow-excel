@@ -3,7 +3,7 @@ package com.nekolr.read.listener;
 import com.nekolr.metadata.ExcelField;
 
 /**
- * 读单元格监听器
+ * 单元格级别的读监听器
  */
 @FunctionalInterface
 public interface ExcelCellReadListener extends ExcelReadListener {

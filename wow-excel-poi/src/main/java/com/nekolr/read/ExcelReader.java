@@ -23,12 +23,12 @@ public class ExcelReader<R> {
     /**
      * 读处理器
      */
-    private ExcelReadProcessor<R> excelReadProcessor;
+    private ExcelReadProcessor<R> readProcessor;
 
 
     public ExcelReader(ExcelReadContext<R> readContext) {
         this.readContext = readContext;
-        this.excelReadProcessor = this.lookupReadProcessor();
+        this.readProcessor = this.lookupReadProcessor();
     }
 
     /**
@@ -76,8 +76,8 @@ public class ExcelReader<R> {
      * 执行读
      */
     private void doRead() {
-        this.excelReadProcessor.init(this.readContext);
-        this.excelReadProcessor.read();
+        this.readProcessor.init(this.readContext);
+        this.readProcessor.read();
     }
 
     /**

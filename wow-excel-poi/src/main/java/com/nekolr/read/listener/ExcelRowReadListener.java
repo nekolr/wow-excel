@@ -1,7 +1,7 @@
 package com.nekolr.read.listener;
 
 /**
- * 读行监听器
+ * 行级别的读监听器
  *
  * @param <R> 使用 @Excel 注解的类类型
  */
