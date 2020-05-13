@@ -26,6 +26,16 @@ public class Constants {
     public static final int DEFAULT_COL_INDEX = 0;
 
     /**
+     * 写数据时默认的起始行
+     */
+    public static final int DEFAULT_WRITE_ROW_INDEX = 0;
+
+    /**
+     * 写数据时默认的起始列
+     */
+    public static final int DEFAULT_WRITE_COL_INDEX = 0;
+
+    /**
      * 默认关闭流式 reader
      */
     public static final boolean STREAMING_READER_DISABLED = false;
@@ -39,4 +49,9 @@ public class Constants {
      * 默认保存读取的结果
      */
     public static final boolean SAVE_RESULT_ENABLED = true;
+
+    /**
+     * 默认关闭流式写
+     */
+    public static final boolean STREAMING_WRITER_DISABLED = false;
 }

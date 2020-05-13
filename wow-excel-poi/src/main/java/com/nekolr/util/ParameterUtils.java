@@ -42,4 +42,14 @@ public class ParameterUtils {
         }
     }
 
+    /**
+     * 判空
+     *
+     * @param content 字符串内容
+     * @return 是否为空
+     */
+    public static boolean isEmpty(String content) {
+        return content == null || "".equals(content);
+    }
+
 }
