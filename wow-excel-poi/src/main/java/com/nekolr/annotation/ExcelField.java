@@ -18,7 +18,7 @@ public @interface ExcelField {
      *
      * @return 表头字段名称
      */
-    String value() default "";
+    String[] value() default {""};
 
     /**
      * 字段出现在 Excel 中的顺序，数值小的在前，默认情况下为实体字段顺序

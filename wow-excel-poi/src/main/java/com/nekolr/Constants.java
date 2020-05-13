@@ -54,4 +54,9 @@ public class Constants {
      * 默认关闭流式写
      */
     public static final boolean STREAMING_WRITER_DISABLED = false;
+
+    /**
+     * 默认关闭写多级表头
+     */
+    public static final boolean WRITE_MULTI_HEAD_DISABLED = false;
 }

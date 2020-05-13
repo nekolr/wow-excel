@@ -130,6 +130,16 @@ public class ExcelWriterBuilder {
     }
 
     /**
+     * 启用写多级表头
+     *
+     * @return ExcelWriterBuilder
+     */
+    public ExcelWriterBuilder enableMultiHead() {
+        this.writeContext.setMultiHead(true);
+        return this;
+    }
+
+    /**
      * 构建
      *
      * @return ExcelWriter

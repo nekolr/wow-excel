@@ -43,13 +43,34 @@ public class ExcelWriter {
     }
 
     /**
+     * 写大标题
+     *
+     * @return ExcelWriter
+     */
+    public ExcelWriter writeBigTitle() {
+        this.doWriteBigTitle();
+        return this;
+    }
+
+    /**
+     * 写表头
+     *
+     * @return ExcelWriter
+     */
+    public ExcelWriter writeHead() {
+        this.doWriteHead();
+        return this;
+    }
+
+    /**
      * 写数据
      *
      * @param data 数据集合
+     * @return ExcelWriter
      */
-    public void write(List<?> data) {
+    public ExcelWriter write(List<?> data) {
         this.doWrite(data);
-        this.flush();
+        return this;
     }
 
     /**
@@ -60,6 +81,22 @@ public class ExcelWriter {
     private void doWrite(List<?> data) {
         this.writeProcessor.init(this.writeContext);
         this.writeProcessor.write(data);
+    }
+
+    /**
+     * 执行写表头
+     */
+    private void doWriteHead() {
+        this.writeProcessor.init(this.writeContext);
+        this.writeProcessor.writeHead();
+    }
+
+    /**
+     * 执行写大标题
+     */
+    private void doWriteBigTitle() {
+        this.writeProcessor.init(this.writeContext);
+        this.writeProcessor.writeBigTitle();
     }
 
     /**

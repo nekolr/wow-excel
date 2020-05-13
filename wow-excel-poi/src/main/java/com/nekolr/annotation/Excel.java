@@ -28,13 +28,6 @@ public @interface Excel {
     WorkbookType type() default WorkbookType.XLS;
 
     /**
-     * 表头标题分隔符号（用于多级表头）
-     *
-     * @return 表头标题分隔符号
-     */
-    String titleSeparator() default "#";
-
-    /**
      * 加载到并常驻内存中的数据行数
      *
      * @return 加载到内存中的行数

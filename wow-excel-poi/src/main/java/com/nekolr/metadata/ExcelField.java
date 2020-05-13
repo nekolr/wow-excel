@@ -11,9 +11,9 @@ import java.lang.reflect.Field;
 public class ExcelField {
 
     /**
-     * 字段名称
+     * 表头标题数组
      */
-    private String filedName;
+    private String[] titles;
 
     /**
      * 表头字段在 Excel 中出现的顺序

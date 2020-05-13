@@ -1,11 +1,14 @@
 package com.nekolr.util;
 
 import com.nekolr.metadata.DataConverter;
-import com.nekolr.metadata.Excel;
 import com.nekolr.metadata.ExcelField;
-import com.nekolr.metadata.Head;
+import com.nekolr.metadata.LastCell;
+import com.nekolr.metadata.OldRowCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
@@ -34,7 +37,7 @@ public class ExcelUtils {
                 if (DateUtil.isCellDateFormatted(cell)) {
                     return cell.getDateCellValue();
                 }
-                return ParameterUtils.numeric2FieldType(cell.getNumericCellValue(), field);
+                return ParamUtils.numeric2FieldType(cell.getNumericCellValue(), field);
             case FORMULA:
                 return cell.getStringCellValue();
             default:
@@ -88,89 +91,92 @@ public class ExcelUtils {
     }
 
     /**
-     * 将列表转换成树形列表
-     * <p>
-     * 时间复杂度：O(N)
+     * 使用写转换器
      *
-     * @param list 未形成树形结构的列表
-     * @return 形成树形结构的列表
+     * @param attrValue     属性数据
+     * @param field         字段元数据
+     * @param dataConverter 使用的数据转换器
+     * @return 转换后的数据
      */
-    public static List<Head> toTree(List<Head> list) {
-        if (list != null) {
-            Map<String, List<Head>> map = new HashMap<>((int) (list.size() / 0.75F + 1.0F));
-            List<Head> result = new ArrayList<>();
-            list.forEach(head -> {
-                map.computeIfAbsent(head.getTitle(), k -> new ArrayList<>());
-                head.setChildren(map.get(head.getTitle()));
-                if (head.getParentTitle() == null) {
-                    result.add(head);
-                } else {
-                    map.computeIfAbsent(head.getParentTitle(), k -> new ArrayList<>());
-                    map.get(head.getParentTitle()).add(head);
-                    map.put(head.getParentTitle(), map.get(head.getParentTitle()));
-                }
-            });
-            return result;
-        }
-        return null;
+    public static Object useWriteConverter(Object attrValue, ExcelField field, DataConverter dataConverter) {
+        return dataConverter.toExcelAttribute(field, attrValue);
     }
 
     /**
-     * 将表头字段元数据列表转换成 Head 类型的列表
+     * 合并列
      *
-     * @param excel excel 注解元数据
-     * @return Head 类型的列表
+     * @param lastCell      上一个单元格
+     * @param sheet         sheet
+     * @param row           行
+     * @param firstColIndex 表格的起始列
+     * @param colIndex      列号
+     * @param colSize       列数
+     * @param cellValue     单元格值
      */
-    public static List<Head> toHeadList(Excel excel) {
-        List<ExcelField> excelFieldList = excel.getFieldList();
-        Map<String, Head> map = new LinkedHashMap<>();
-        for (int i = 0; i < excelFieldList.size(); i++) {
-            ExcelField field = excelFieldList.get(i);
-            // 使用表头标题分隔符拆分
-            String[] titles = field.getFiledName().split(excel.getTitleSeparator());
-            for (int j = 0; j < titles.length; j++) {
-                Head head = new Head();
-                head.setTitle(titles[j]);
-                // 设置层数
-                head.setLevel(titles.length - j);
-                if (j > 0) {
-                    // 后边的才有父标题
-                    head.setParentTitle(titles[j - 1]);
-                }
-                if (j == titles.length - 1) {
-                    // 最后一个标题才有字段元数据
-                    head.setExcelField(field);
-                    head.setOldIndex(i);
-                }
-                if (map.containsKey(head.getTitle())) {
-                    // 如果已有的元素的 level 比新元素的小，则进行覆盖
-                    if (head.getLevel() > map.get(head.getTitle()).getLevel()) {
-                        map.put(head.getTitle(), head);
-                    }
-                } else {
-                    map.put(head.getTitle(), head);
-                }
-            }
+    public static void mergeCols(LastCell lastCell, Sheet sheet, Row row, int firstColIndex, int colIndex, int colSize, Object cellValue) {
+        // 将第一列的单元格信息保存
+        if (colIndex == firstColIndex) {
+            lastCell.setValue(cellValue);
+            lastCell.setColIndex(colIndex);
+            return;
         }
-        return new ArrayList(map.values());
+        // 上一个单元格与当前单元格的值相同，说明需要合并列
+        if (ParamUtils.equals(cellValue, lastCell.getValue())) {
+            // 直到当前列为最后一列时，合并列
+            if (colIndex - firstColIndex == colSize - 1) {
+                sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), lastCell.getColIndex(), colIndex));
+            }
+            return;
+        }
+        // 值相同的单元格有时不会连续出现直到最后一列
+        // 此时 lastCell 记录的还是第一次出现的单元格，并且当前单元格的值一定是第一个和记录值不同的单元格（因为相同的值会走上面的逻辑）
+        // 此时 lastCell 记录的单元格的列号 + 1 还是小于当前列号，说明多次出现了值相同的列但是没有进行合并
+        if (lastCell.getColIndex() + 1 < colIndex) {
+            sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), lastCell.getColIndex(), colIndex - 1));
+        }
+        // 将每一列的信息保存，最后一列不需要保存，因为它没有下一列，即没有某个列的上一列是它
+        // 如果遇到需要合并的列（即上一个列的值和该列的值相同），lastCell 保存的是需要合并的第一个单元格
+        if (colIndex - firstColIndex != colSize - 1) {
+            lastCell.setValue(cellValue);
+            lastCell.setColIndex(colIndex);
+        }
+
     }
 
     /**
-     * 计算给定表头的叶子表头个数
+     * 合并行
      *
-     * @param head  指定的表头
-     * @param count 叶子表头个数
-     * @return 叶子表头个数
+     * @param oldRowCache
+     * @param sheet
+     * @param row
+     * @param rowNum
+     * @param colIndex
+     * @param rowSize
+     * @param cellValue
      */
-    public static int getLeafChildCount(Head head, int count) {
-        List<Head> children = head.getChildren();
-        if (children.size() == 0) {
-            count++;
-        } else {
-            for (Head child : children) {
-                count = getLeafChildCount(child, count);
-            }
+    public static void mergeRows(Map<Integer, OldRowCell> oldRowCache, Sheet sheet, Row row, int rowNum,
+                                 int colIndex, int rowSize, Object cellValue) {
+        // 将第一行每个表头单元格的信息记录下来
+        if (rowNum == 0) {
+            oldRowCache.put(colIndex, new OldRowCell(cellValue, row.getRowNum()));
+            return;
         }
-        return count;
+        OldRowCell oldRowCell = oldRowCache.get(colIndex);
+        // 值相同说明需要合并行
+        if (ParamUtils.equals(cellValue, oldRowCell.getCellValue())) {
+            // 直到当前行为最后一行时，进行合并行
+            if (rowNum == rowSize - 1) {
+                sheet.addMergedRegion(new CellRangeAddress(oldRowCell.getRowIndex(), row.getRowNum(), colIndex, colIndex));
+            }
+            return;
+        }
+        // 与合并列类似，值相同的单元格也有可能不会连续出现直到最后一行，这里就是对这种情况进行补漏地合并
+        if (oldRowCell.getRowIndex() + 1 < row.getRowNum()) {
+            sheet.addMergedRegion(new CellRangeAddress(oldRowCell.getRowIndex(), row.getRowNum() - 1, colIndex, colIndex));
+        }
+        // 执行到这里说明值不相等，意味着不需要合并行，所以更新行所在列的信息，保存上一行所在列的单元格信息
+        if (rowNum != rowSize - 1) {
+            oldRowCache.put(colIndex, new OldRowCell(cellValue, row.getRowNum()));
+        }
     }
 }

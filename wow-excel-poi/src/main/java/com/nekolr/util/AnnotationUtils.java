@@ -24,7 +24,7 @@ public class AnnotationUtils {
      */
     public static com.nekolr.metadata.Excel toBean(Class<?> excelClass, String... ignores) {
         Excel excel = excelClass.getAnnotation(Excel.class);
-        ParameterUtils.requireNotNull(excel, "@Excel annotation was not found on the " + excelClass);
+        ParamUtils.requireNotNull(excel, "@Excel annotation was not found on the " + excelClass);
         Field[] fieldArray = excelClass.getDeclaredFields();
         List<Field> fieldList = new ArrayList<>(Arrays.asList(fieldArray));
         List<String> ignoreList = new ArrayList<>(Arrays.asList(ignores));
@@ -35,11 +35,16 @@ public class AnnotationUtils {
                 .map(field -> {
                     ExcelField fieldAnnotation = field.getAnnotation(ExcelField.class);
                     com.nekolr.metadata.ExcelField excelField = new com.nekolr.metadata.ExcelField();
-                    excelField.setFiledName(fieldAnnotation.value());
+                    excelField.setTitles(fieldAnnotation.value());
                     excelField.setOrder(fieldAnnotation.order());
                     excelField.setAllowEmpty(fieldAnnotation.allowEmpty());
                     excelField.setAutoTrim(fieldAnnotation.autoTrim());
-                    excelField.setIgnore(ignoreList.contains(fieldAnnotation.value()) || fieldAnnotation.ignore());
+                    // 如果忽略父级表头，那么所有的子表头都会忽略
+                    for (String title : fieldAnnotation.value()) {
+                        if (ParamUtils.contains(ignores, title)) {
+                            excelField.setIgnore(true);
+                        }
+                    }
                     excelField.setFormat(fieldAnnotation.format());
                     excelField.setWidth(fieldAnnotation.width());
                     excelField.setConverter(fieldAnnotation.converter());
@@ -51,7 +56,6 @@ public class AnnotationUtils {
         com.nekolr.metadata.Excel excelBean = new com.nekolr.metadata.Excel();
         excelBean.setExcelName(excel.value());
         excelBean.setWorkbookType(excel.type());
-        excelBean.setTitleSeparator(excel.titleSeparator());
         excelBean.setRowCacheSize(excel.rowCacheSize());
         excelBean.setBufferSize(excel.bufferSize());
         excelBean.setFieldList(excelFieldList);

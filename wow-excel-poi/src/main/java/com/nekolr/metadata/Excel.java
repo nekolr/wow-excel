@@ -24,11 +24,6 @@ public class Excel {
     private WorkbookType workbookType;
 
     /**
-     * 表头标题分隔符号（用于多级表头）
-     */
-    private String titleSeparator;
-
-    /**
      * 字段列表
      *
      * @see ExcelField

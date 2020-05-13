@@ -22,4 +22,15 @@ public interface ExcelWriteProcessor {
      * @param data 数据集合
      */
     void write(List<?> data);
+
+    /**
+     * 写表头
+     */
+    void writeHead();
+
+    /**
+     * 写大标题
+     */
+    default void writeBigTitle() {
+    }
 }

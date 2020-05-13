@@ -4,7 +4,7 @@ import com.nekolr.exception.ExcelReadInitException;
 
 import java.lang.reflect.Field;
 
-public class ParameterUtils {
+public class ParamUtils {
 
     /**
      * 判断对象是否为空
@@ -50,6 +50,39 @@ public class ParameterUtils {
      */
     public static boolean isEmpty(String content) {
         return content == null || "".equals(content);
+    }
+
+    /**
+     * 判断数组中是否存在此元素
+     *
+     * @param array   数组
+     * @param element 元素
+     * @return 是否存在
+     */
+    public static boolean contains(String[] array, String element) {
+        if (array == null || array.length == 0) {
+            return false;
+        }
+        for (String o : array) {
+            if (o.equals(element)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 比较两个值是否相等
+     *
+     * @param param1 值1
+     * @param param2 值2
+     * @return 两个值是否相等
+     */
+    public static boolean equals(Object param1, Object param2) {
+        if (param1 == null || param2 == null) {
+            return false;
+        }
+        return param1 == param2 || param1.equals(param2);
     }
 
 }

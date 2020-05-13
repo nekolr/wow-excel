@@ -55,30 +55,30 @@ public class Test {
 @ToString
 public class Project {
 
-    @ExcelField("项目")
+    @ExcelField({"项目", "项目"})
     private String project;
 
-    @ExcelField("负责人")
+    @ExcelField({"负责人", "负责人"})
     private String manager;
 
-    @ExcelField("立项时间")
+    @ExcelField({"立项时间", "立项时间"})
     private Date date;
 
-    @ExcelField("年度预算#一季度")
+    @ExcelField({"年度预算", "一季度"})
     private Double q1;
 
-    @ExcelField("年度预算#二季度")
+    @ExcelField({"年度预算", "二季度"})
     private Double q2;
 
-    @ExcelField("年度预算#三季度")
+    @ExcelField({"年度预算", "三季度"})
     private Double q3;
 
-    @ExcelField("年度预算#四季度")
+    @ExcelField({"年度预算", "四季度"})
     private Double q4;
 }
 ```
 
-接下来是读取 excel 的代码：
+通过这种方式构建的多级表头，能够在定义之初就将整个表头部分的结构描述出来，这样在写 excel 的时候再进行行合并或者列合并就比较简单了。下面是读取 excel 的代码：
 
 ```java
 public class Test {

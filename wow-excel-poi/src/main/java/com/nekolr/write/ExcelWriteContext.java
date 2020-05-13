@@ -1,6 +1,8 @@
 package com.nekolr.write;
 
 import com.nekolr.Constants;
+import com.nekolr.convert.DefaultDataConverter;
+import com.nekolr.metadata.DataConverter;
 import com.nekolr.metadata.Excel;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +11,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -17,7 +21,7 @@ public class ExcelWriteContext {
     /**
      * 输出文件名称
      * <p>
-     * 在没有指定输出文件的情况下，优先使用该设置，其次使用 Excel 注解上的 value
+     * 优先使用该设置，其次使用 Excel 注解上的 value
      */
     private String filename;
 
@@ -78,4 +82,19 @@ public class ExcelWriteContext {
      */
     private int colIndex = Constants.DEFAULT_WRITE_COL_INDEX;
 
+    /**
+     * 是否写多级表头，默认不写
+     */
+    private boolean multiHead = Constants.WRITE_MULTI_HEAD_DISABLED;
+
+    /**
+     * 数据转换器集合
+     */
+    private Map<Class<? extends DataConverter>, DataConverter> converterCache = new HashMap<>();
+
+
+    public ExcelWriteContext() {
+        // 添加默认的数据转换器
+        this.converterCache.put(DefaultDataConverter.class, new DefaultDataConverter());
+    }
 }
