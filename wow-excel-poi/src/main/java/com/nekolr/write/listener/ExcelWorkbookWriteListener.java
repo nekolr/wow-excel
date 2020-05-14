@@ -8,7 +8,7 @@ import com.nekolr.write.ExcelWriteContext;
 public interface ExcelWorkbookWriteListener extends ExcelWriteListener {
 
     /**
-     * 在数据刷新到文件或流上之前调用
+     * 在数据刷新到文件或流之前调用
      *
      * @param writeContext 写上下文
      */

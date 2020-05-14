@@ -1,4 +1,4 @@
-package com.nekolr.metadata;
+package com.nekolr.write.merge;
 
 import lombok.Data;
 
@@ -16,5 +16,5 @@ public class LastCell {
     /**
      * 上一个单元格的列号
      */
-    private int colIndex;
+    private int colNum;
 }

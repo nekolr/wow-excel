@@ -1,6 +1,7 @@
 package com.nekolr.write.processor;
 
 import com.nekolr.write.ExcelWriteContext;
+import com.nekolr.write.metadata.BigTitle;
 
 import java.util.List;
 
@@ -31,6 +32,6 @@ public interface ExcelWriteProcessor {
     /**
      * 写大标题
      */
-    default void writeBigTitle() {
+    default void writeBigTitle(BigTitle bigTitle) {
     }
 }

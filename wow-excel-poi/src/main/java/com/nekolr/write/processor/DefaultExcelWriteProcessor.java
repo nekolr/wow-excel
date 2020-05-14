@@ -8,11 +8,16 @@ import com.nekolr.util.BeanUtils;
 import com.nekolr.util.ExcelUtils;
 import com.nekolr.util.ParamUtils;
 import com.nekolr.write.ExcelWriteContext;
+import com.nekolr.write.listener.ExcelWriteEventProcessor;
+import com.nekolr.write.metadata.BigTitle;
+import com.nekolr.write.merge.LastCell;
+import com.nekolr.write.merge.OldRowCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -46,23 +51,27 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
         if (data != null && data.size() != 0) {
             Excel excel = this.writeContext.getExcel();
             Sheet sheet = this.getOrCreateSheet();
-            int rowIndex = this.getRowIndex(sheet);
-            int colIndex = this.writeContext.getColIndex();
+            int rowNum = this.getRowNum(sheet);
+            int colNum = this.writeContext.getColNum();
             List<ExcelField> excelFieldList = excel.getFieldList();
-            for (int i = 0; i < data.size(); i++) {
-                Object entity = data.get(i);
-                Row row = sheet.createRow(rowIndex);
+            for (int r = 0; r < data.size(); r++) {
+                Object rowEntity = data.get(r);
+                Row row = sheet.createRow(rowNum + r);
                 for (int col = 0; col < excelFieldList.size(); col++) {
                     ExcelField excelField = excelFieldList.get(col);
-                    Cell cell = row.createCell(colIndex + col);
+                    Cell cell = row.createCell(colNum + col);
                     DataConverter dataConverter = this.getDataConverter(excelField);
                     // 获取属性值
-                    Object attrValue = BeanUtils.getFieldValue(entity, excelField.getField());
+                    Object attrValue = BeanUtils.getFieldValue(rowEntity, excelField.getField());
                     // 使用数据转换器
-                    attrValue = ExcelUtils.useWriteConverter(attrValue, excelField, dataConverter);
+                    Object cellValue = ExcelUtils.useWriteConverter(attrValue, excelField, dataConverter);
                     // 单元格赋值
-                    ExcelUtils.setCellValue(cell, attrValue, excelField);
+                    ExcelUtils.setCellValue(cell, cellValue, excelField);
+                    // Event: 写单元格结束后触发
+                    ExcelWriteEventProcessor.afterWriteCell(this.writeContext.getCellWriteListeners(), sheet, row, cell, excelField, r, colNum + col, cellValue);
                 }
+                // Event: 写行结束后触发
+                ExcelWriteEventProcessor.afterWriteRow(this.writeContext.getRowWriteListeners(), sheet, row, rowEntity, r);
             }
         }
     }
@@ -75,17 +84,18 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
     public void writeHead() {
         LastCell lastCell = null;
         Sheet sheet = this.getOrCreateSheet();
-        int rowIndex = this.getRowIndex(sheet);
-        int colIndex = this.writeContext.getColIndex();
+        int rowNum = this.getRowNum(sheet);
+        int colNum = this.writeContext.getColNum();
         Excel excel = this.writeContext.getExcel();
         List<ExcelField> excelFieldList = excel.getFieldList();
         // 第一个字段元数据的标题数组的长度就代表了所有表头占用的行数
         for (int r = 0, rowSize = excelFieldList.get(0).getTitles().length; r < rowSize; r++) {
-            Row row = sheet.createRow(rowIndex + r);
+            Row row = sheet.createRow(rowNum + r);
             for (int col = 0, colSize = excelFieldList.size(); col < colSize; col++) {
-                String[] titles = excelFieldList.get(col).getTitles();
+                ExcelField excelField = excelFieldList.get(col);
+                String[] titles = excelField.getTitles();
                 String title = titles[r];
-                Cell cell = row.createCell(colIndex + col);
+                Cell cell = row.createCell(colNum + col);
                 // 设置表头名称
                 cell.setCellValue(title);
                 // 需要写多级表头
@@ -98,21 +108,31 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
                     }
                     try {
                         // 合并列
-                        ExcelUtils.mergeCols(lastCell, sheet, row, colIndex, colIndex + col, colSize, title);
+                        ExcelUtils.mergeCols(lastCell, sheet, row, colNum, colNum + col, colSize, title);
                         // 合并行
-                        ExcelUtils.mergeRows(oldRowCache, sheet, row, r, colIndex + col, rowSize, title);
+                        ExcelUtils.mergeRows(oldRowCache, sheet, row, r, colNum + col, rowSize, title);
                     } catch (Exception e) {
                         throw new ExcelWriteException("Auto merge failure", e);
                     }
                 }
             }
         }
-
     }
 
     @Override
-    public void writeBigTitle() {
+    public void writeBigTitle(BigTitle bigTitle) {
         Sheet sheet = this.getOrCreateSheet();
+        int rowNum = this.getRowNum(sheet);
+        int endRowNum = rowNum + bigTitle.getLines() - 1;
+        for (int r = 0; r < bigTitle.getLines(); r++) {
+            Row row = sheet.createRow(rowNum + r);
+            // 大标题设置的起始列号和结束列号不受全局设置（写上下文）的 colIndex 影响
+            for (int col = bigTitle.getFirstColNum(); col < bigTitle.getLastColNum(); col++) {
+                Cell cell = row.createCell(col);
+                cell.setCellValue(bigTitle.getContent());
+            }
+        }
+        sheet.addMergedRegion(new CellRangeAddress(rowNum, endRowNum, bigTitle.getFirstColNum(), bigTitle.getLastColNum()));
     }
 
     /**
@@ -178,24 +198,26 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
                 sheet = workbook.createSheet(sheetName);
             }
             this.writeContext.setSheet(sheet);
+            // Event: 在创建 sheet 后触发
+            ExcelWriteEventProcessor.afterCreateSheet(this.writeContext.getSheetWriteListeners(), sheet, this.writeContext);
         }
         return sheet;
     }
 
     /**
-     * 计算当前可以开始的行
+     * 计算当前可以开始的行号
      *
      * @param sheet sheet
-     * @return 当前可以开始的行
+     * @return 当前可以开始的行号
      */
-    private int getRowIndex(Sheet sheet) {
+    private int getRowNum(Sheet sheet) {
         // -1 表示一行都没有
-        int lastRowIndex = sheet.getLastRowNum();
-        int customIndex = this.writeContext.getRowIndex();
-        if (lastRowIndex == -1) {
-            return customIndex;
+        int lastRowNum = sheet.getLastRowNum();
+        int customRowNum = this.writeContext.getRowNum();
+        if (lastRowNum == -1) {
+            return customRowNum;
         } else {
-            return lastRowIndex + 1;
+            return lastRowNum + 1;
         }
     }
 }

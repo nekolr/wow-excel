@@ -149,7 +149,7 @@ public class ExcelReaderBuilder<R> {
     }
 
     /**
-     * 设置读 sheet 监听器
+     * 设置 sheet 级别的读监听器
      *
      * @param readListener 读监听器
      * @return ExcelReaderBuilder
@@ -160,7 +160,7 @@ public class ExcelReaderBuilder<R> {
     }
 
     /**
-     * 设置读 sheet 监听器集合
+     * 设置 sheet 级别的读监听器集合
      *
      * @param readListeners 读监听器集合
      * @return ExcelReaderBuilder
@@ -171,7 +171,7 @@ public class ExcelReaderBuilder<R> {
     }
 
     /**
-     * 设置读行监听器
+     * 设置行级别的读监听器
      *
      * @param readListener 读监听器
      * @return ExcelReaderBuilder
@@ -182,7 +182,7 @@ public class ExcelReaderBuilder<R> {
     }
 
     /**
-     * 设置读行监听器集合
+     * 设置行级别的读监听器集合
      *
      * @param readListeners 读监听器集合
      * @return ExcelReaderBuilder
@@ -193,7 +193,7 @@ public class ExcelReaderBuilder<R> {
     }
 
     /**
-     * 设置读单元格监听器
+     * 设置单元格级别的读监听器
      *
      * @param readListener 读监听器
      * @return ExcelReaderBuilder
@@ -204,7 +204,7 @@ public class ExcelReaderBuilder<R> {
     }
 
     /**
-     * 设置读单元格监听器集合
+     * 设置单元格级别的读监听器集合
      *
      * @param readListeners 读监听器集合
      * @return ExcelReaderBuilder
@@ -215,7 +215,7 @@ public class ExcelReaderBuilder<R> {
     }
 
     /**
-     * 设置读空单元格监听器
+     * 设置空单元格的读监听器
      *
      * @param readListener 读监听器
      * @return ExcelReaderBuilder
@@ -226,7 +226,7 @@ public class ExcelReaderBuilder<R> {
     }
 
     /**
-     * 设置读空单元格监听器集合
+     * 设置空单元格的读监听器集合
      *
      * @param readListeners 读监听器集合
      * @return ExcelReaderBuilder

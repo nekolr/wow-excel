@@ -2,8 +2,8 @@ package com.nekolr.util;
 
 import com.nekolr.metadata.DataConverter;
 import com.nekolr.metadata.ExcelField;
-import com.nekolr.metadata.LastCell;
-import com.nekolr.metadata.OldRowCell;
+import com.nekolr.write.merge.LastCell;
+import com.nekolr.write.merge.OldRowCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -105,40 +105,40 @@ public class ExcelUtils {
     /**
      * 合并列
      *
-     * @param lastCell      上一个单元格
-     * @param sheet         sheet
-     * @param row           行
-     * @param firstColIndex 表格的起始列
-     * @param colIndex      列号
-     * @param colSize       列数
-     * @param cellValue     单元格值
+     * @param lastCell    上一个单元格
+     * @param sheet       sheet
+     * @param row         行
+     * @param firstColNum 表格的起始列号
+     * @param colNum      列号
+     * @param colSize     列数
+     * @param cellValue   单元格值
      */
-    public static void mergeCols(LastCell lastCell, Sheet sheet, Row row, int firstColIndex, int colIndex, int colSize, Object cellValue) {
+    public static void mergeCols(LastCell lastCell, Sheet sheet, Row row, int firstColNum, int colNum, int colSize, Object cellValue) {
         // 将第一列的单元格信息保存
-        if (colIndex == firstColIndex) {
+        if (colNum == firstColNum) {
             lastCell.setValue(cellValue);
-            lastCell.setColIndex(colIndex);
+            lastCell.setColNum(colNum);
             return;
         }
         // 上一个单元格与当前单元格的值相同，说明需要合并列
         if (ParamUtils.equals(cellValue, lastCell.getValue())) {
             // 直到当前列为最后一列时，合并列
-            if (colIndex - firstColIndex == colSize - 1) {
-                sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), lastCell.getColIndex(), colIndex));
+            if (colNum - firstColNum == colSize - 1) {
+                sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), lastCell.getColNum(), colNum));
             }
             return;
         }
         // 值相同的单元格有时不会连续出现直到最后一列
         // 此时 lastCell 记录的还是第一次出现的单元格，并且当前单元格的值一定是第一个和记录值不同的单元格（因为相同的值会走上面的逻辑）
         // 此时 lastCell 记录的单元格的列号 + 1 还是小于当前列号，说明多次出现了值相同的列但是没有进行合并
-        if (lastCell.getColIndex() + 1 < colIndex) {
-            sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), lastCell.getColIndex(), colIndex - 1));
+        if (lastCell.getColNum() + 1 < colNum) {
+            sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), lastCell.getColNum(), colNum - 1));
         }
         // 将每一列的信息保存，最后一列不需要保存，因为它没有下一列，即没有某个列的上一列是它
         // 如果遇到需要合并的列（即上一个列的值和该列的值相同），lastCell 保存的是需要合并的第一个单元格
-        if (colIndex - firstColIndex != colSize - 1) {
+        if (colNum - firstColNum != colSize - 1) {
             lastCell.setValue(cellValue);
-            lastCell.setColIndex(colIndex);
+            lastCell.setColNum(colNum);
         }
 
     }
@@ -146,37 +146,37 @@ public class ExcelUtils {
     /**
      * 合并行
      *
-     * @param oldRowCache
-     * @param sheet
-     * @param row
-     * @param rowNum
-     * @param colIndex
-     * @param rowSize
-     * @param cellValue
+     * @param oldRowCache 旧的行数据缓存
+     * @param sheet       sheet
+     * @param row         当前行
+     * @param rowIndex    遍历行时的索引
+     * @param colNum      列号
+     * @param rowSize     行数
+     * @param cellValue   单元格数据
      */
-    public static void mergeRows(Map<Integer, OldRowCell> oldRowCache, Sheet sheet, Row row, int rowNum,
-                                 int colIndex, int rowSize, Object cellValue) {
+    public static void mergeRows(Map<Integer, OldRowCell> oldRowCache, Sheet sheet, Row row, int rowIndex,
+                                 int colNum, int rowSize, Object cellValue) {
         // 将第一行每个表头单元格的信息记录下来
-        if (rowNum == 0) {
-            oldRowCache.put(colIndex, new OldRowCell(cellValue, row.getRowNum()));
+        if (rowIndex == 0) {
+            oldRowCache.put(colNum, new OldRowCell(cellValue, row.getRowNum()));
             return;
         }
-        OldRowCell oldRowCell = oldRowCache.get(colIndex);
+        OldRowCell oldRowCell = oldRowCache.get(colNum);
         // 值相同说明需要合并行
         if (ParamUtils.equals(cellValue, oldRowCell.getCellValue())) {
             // 直到当前行为最后一行时，进行合并行
-            if (rowNum == rowSize - 1) {
-                sheet.addMergedRegion(new CellRangeAddress(oldRowCell.getRowIndex(), row.getRowNum(), colIndex, colIndex));
+            if (rowIndex == rowSize - 1) {
+                sheet.addMergedRegion(new CellRangeAddress(oldRowCell.getRowNum(), row.getRowNum(), colNum, colNum));
             }
             return;
         }
         // 与合并列类似，值相同的单元格也有可能不会连续出现直到最后一行，这里就是对这种情况进行补漏地合并
-        if (oldRowCell.getRowIndex() + 1 < row.getRowNum()) {
-            sheet.addMergedRegion(new CellRangeAddress(oldRowCell.getRowIndex(), row.getRowNum() - 1, colIndex, colIndex));
+        if (oldRowCell.getRowNum() + 1 < row.getRowNum()) {
+            sheet.addMergedRegion(new CellRangeAddress(oldRowCell.getRowNum(), row.getRowNum() - 1, colNum, colNum));
         }
         // 执行到这里说明值不相等，意味着不需要合并行，所以更新行所在列的信息，保存上一行所在列的单元格信息
-        if (rowNum != rowSize - 1) {
-            oldRowCache.put(colIndex, new OldRowCell(cellValue, row.getRowNum()));
+        if (rowIndex != rowSize - 1) {
+            oldRowCache.put(colNum, new OldRowCell(cellValue, row.getRowNum()));
         }
     }
 }

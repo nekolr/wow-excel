@@ -1,4 +1,4 @@
-package com.nekolr.metadata;
+package com.nekolr.write.merge;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +20,6 @@ public class OldRowCell {
     /**
      * 旧的行号
      */
-    private int rowIndex;
+    private int rowNum;
 
 }

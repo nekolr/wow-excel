@@ -35,8 +35,8 @@ public class Project {
 public class Test {
     public static void main(String[] args) {
         List<Project> list = WoWExcel.createReaderBuilder("计划书.xls", Project.class)
-                .rowIndex(2)
-                .colIndex(1)
+                .rowNum(2)
+                .colNum(1)
                 .build()
                 .readAndGet();
         list.forEach(System.out::println);
@@ -84,7 +84,7 @@ public class Project {
 public class Test {
     public static void main(String[] args) {
         WoWExcel.createReaderBuilder("计划书.xls", Project.class)
-                .rowIndex(2)
+                .rowNum(2)
                 .subscribe(list -> list.forEach(System.out::println))
                 .build()
                 .read();

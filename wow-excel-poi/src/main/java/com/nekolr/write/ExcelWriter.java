@@ -1,9 +1,14 @@
 package com.nekolr.write;
 
+import com.nekolr.exception.ExcelWriteException;
+import com.nekolr.write.listener.ExcelWriteEventProcessor;
+import com.nekolr.write.metadata.BigTitle;
 import com.nekolr.write.processor.DefaultExcelWriteProcessor;
 import com.nekolr.write.processor.ExcelWriteProcessor;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -47,8 +52,8 @@ public class ExcelWriter {
      *
      * @return ExcelWriter
      */
-    public ExcelWriter writeBigTitle() {
-        this.doWriteBigTitle();
+    public ExcelWriter writeBigTitle(BigTitle bigTitle) {
+        this.doWriteBigTitle(bigTitle);
         return this;
     }
 
@@ -94,21 +99,36 @@ public class ExcelWriter {
     /**
      * 执行写大标题
      */
-    private void doWriteBigTitle() {
+    private void doWriteBigTitle(BigTitle bigTitle) {
         this.writeProcessor.init(this.writeContext);
-        this.writeProcessor.writeBigTitle();
+        this.writeProcessor.writeBigTitle(bigTitle);
     }
 
     /**
      * 刷新写入
      */
     public void flush() {
-        if (this.writeContext.getWorkbook() != null) {
+        // Event: 在刷新之前触发
+        ExcelWriteEventProcessor.beforeFlush(this.writeContext.getWorkbookWriteListeners(), this.writeContext);
+        Workbook workbook = this.writeContext.getWorkbook();
+        OutputStream out = this.writeContext.getOutputStream();
+        try {
+            workbook.write(out);
+        } catch (IOException e) {
+            throw new ExcelWriteException("Excel cache data refresh failure", e);
+        } finally {
             try {
-                this.writeContext.getWorkbook().write(this.writeContext.getOutputStream());
+                if (workbook != null) {
+                    workbook.close();
+                }
+                if (out != null) {
+                    out.flush();
+                    out.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
     }
 }

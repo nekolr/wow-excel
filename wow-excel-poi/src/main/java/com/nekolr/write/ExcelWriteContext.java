@@ -4,14 +4,16 @@ import com.nekolr.Constants;
 import com.nekolr.convert.DefaultDataConverter;
 import com.nekolr.metadata.DataConverter;
 import com.nekolr.metadata.Excel;
+import com.nekolr.write.listener.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import java.io.File;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -24,11 +26,6 @@ public class ExcelWriteContext {
      * 优先使用该设置，其次使用 Excel 注解上的 value
      */
     private String filename;
-
-    /**
-     * 输出的 Excel 文件
-     */
-    private File file;
 
     /**
      * 输出流
@@ -75,17 +72,37 @@ public class ExcelWriteContext {
     /**
      * 开始的行号
      */
-    private int rowIndex = Constants.DEFAULT_WRITE_ROW_INDEX;
+    private int rowNum = Constants.DEFAULT_WRITE_ROW_NUM;
 
     /**
      * 开始的列号
      */
-    private int colIndex = Constants.DEFAULT_WRITE_COL_INDEX;
+    private int colNum = Constants.DEFAULT_WRITE_COL_NUM;
 
     /**
      * 是否写多级表头，默认不写
      */
     private boolean multiHead = Constants.WRITE_MULTI_HEAD_DISABLED;
+
+    /**
+     * 单元格级别的写监听器集合
+     */
+    private List<ExcelCellWriteListener> cellWriteListeners = new ArrayList<>();
+
+    /**
+     * 行级别的写监听器集合
+     */
+    private List<ExcelRowWriteListener> rowWriteListeners = new ArrayList<>();
+
+    /**
+     * sheet 级别的写监听器集合
+     */
+    private List<ExcelSheetWriteListener> sheetWriteListeners = new ArrayList<>();
+
+    /**
+     * workbook 级别的写监听器集合
+     */
+    private List<ExcelWorkbookWriteListener> workbookWriteListeners = new ArrayList<>();
 
     /**
      * 数据转换器集合
@@ -96,5 +113,27 @@ public class ExcelWriteContext {
     public ExcelWriteContext() {
         // 添加默认的数据转换器
         this.converterCache.put(DefaultDataConverter.class, new DefaultDataConverter());
+    }
+
+    /**
+     * 添加写监听器
+     *
+     * @param writeListener 写监听器
+     * @return 写上下文
+     */
+    public ExcelWriteContext addListener(ExcelWriteListener writeListener) {
+        if (writeListener instanceof ExcelCellWriteListener) {
+            this.cellWriteListeners.add((ExcelCellWriteListener) writeListener);
+        }
+        if (writeListener instanceof ExcelRowWriteListener) {
+            this.rowWriteListeners.add((ExcelRowWriteListener) writeListener);
+        }
+        if (writeListener instanceof ExcelSheetWriteListener) {
+            this.sheetWriteListeners.add((ExcelSheetWriteListener) writeListener);
+        }
+        if (writeListener instanceof ExcelWorkbookWriteListener) {
+            this.workbookWriteListeners.add((ExcelWorkbookWriteListener) writeListener);
+        }
+        return this;
     }
 }

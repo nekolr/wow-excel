@@ -22,7 +22,7 @@ public class WoWExcel {
      * @return ExcelReaderBuilder
      */
     public static <R> ExcelReaderBuilder<R> createReaderBuilder(String filepath, Class<R> excelClass, String... ignores) {
-        Excel excel = AnnotationUtils.toBean(excelClass, ignores);
+        Excel excel = AnnotationUtils.toReadBean(excelClass, ignores);
         ExcelReaderBuilder<R> excelReaderBuilder = new ExcelReaderBuilder<>();
         excelReaderBuilder.file(filepath);
         excelReaderBuilder.of(excelClass);
@@ -40,7 +40,7 @@ public class WoWExcel {
      * @return ExcelReaderBuilder
      */
     public static <R> ExcelReaderBuilder<R> createReaderBuilder(File file, Class<R> excelClass, String... ignores) {
-        Excel excel = AnnotationUtils.toBean(excelClass, ignores);
+        Excel excel = AnnotationUtils.toReadBean(excelClass, ignores);
         ExcelReaderBuilder<R> excelReaderBuilder = new ExcelReaderBuilder<>();
         excelReaderBuilder.file(file);
         excelReaderBuilder.of(excelClass);
@@ -58,7 +58,7 @@ public class WoWExcel {
      * @return ExcelReaderBuilder
      */
     public static <R> ExcelReaderBuilder<R> createReaderBuilder(InputStream in, Class<R> excelClass, String... ignores) {
-        Excel excel = AnnotationUtils.toBean(excelClass, ignores);
+        Excel excel = AnnotationUtils.toReadBean(excelClass, ignores);
         ExcelReaderBuilder<R> excelReaderBuilder = new ExcelReaderBuilder<>();
         excelReaderBuilder.file(in);
         excelReaderBuilder.of(excelClass);
@@ -75,7 +75,7 @@ public class WoWExcel {
      * @return ExcelWriterBuilder
      */
     public static ExcelWriterBuilder createWriterBuilder(OutputStream out, Class<?> excelClass, String... ignores) {
-        Excel excel = AnnotationUtils.toBean(excelClass, ignores);
+        Excel excel = AnnotationUtils.toWriteBean(excelClass, ignores);
         ExcelWriterBuilder excelWriterBuilder = new ExcelWriterBuilder();
         excelWriterBuilder.metadata(excel);
         excelWriterBuilder.file(out);
