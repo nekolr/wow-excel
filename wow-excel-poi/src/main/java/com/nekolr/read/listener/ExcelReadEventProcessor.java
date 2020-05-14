@@ -1,7 +1,6 @@
 package com.nekolr.read.listener;
 
 import com.nekolr.metadata.ExcelField;
-import com.nekolr.metadata.ExcelReadResultListener;
 import com.nekolr.read.ExcelReadContext;
 
 import java.util.List;
@@ -19,9 +18,7 @@ public class ExcelReadEventProcessor {
      * @param <R>           使用 @Excel 注解的类类型
      */
     public static <R> void beforeReadSheet(List<ExcelSheetReadListener<R>> readListeners, ExcelReadContext<R> readContext) {
-        if (readListeners != null) {
-            readListeners.forEach(listener -> listener.beforeReadSheet(readContext));
-        }
+        readListeners.forEach(listener -> listener.beforeReadSheet(readContext));
     }
 
     /**
@@ -36,10 +33,8 @@ public class ExcelReadEventProcessor {
      */
     public static Object afterReadCell(List<ExcelCellReadListener> readListeners, ExcelField field,
                                        Object cellValue, int rowNum, int colNum) {
-        if (readListeners != null) {
-            for (ExcelCellReadListener readListener : readListeners) {
-                cellValue = readListener.afterReadCell(field, cellValue, rowNum, colNum);
-            }
+        for (ExcelCellReadListener readListener : readListeners) {
+            cellValue = readListener.afterReadCell(field, cellValue, rowNum, colNum);
         }
         return cellValue;
     }
@@ -56,10 +51,8 @@ public class ExcelReadEventProcessor {
     public static Object afterReadEmptyCell(List<ExcelEmptyCellReadListener> readListeners, ExcelField field,
                                             int rowNum, int colNum) {
         Object cellValue = null;
-        if (readListeners != null) {
-            for (ExcelEmptyCellReadListener readListener : readListeners) {
-                cellValue = readListener.handleEmpty(field, rowNum, colNum);
-            }
+        for (ExcelEmptyCellReadListener readListener : readListeners) {
+            cellValue = readListener.handleEmpty(field, rowNum, colNum);
         }
         return cellValue;
     }
@@ -75,10 +68,8 @@ public class ExcelReadEventProcessor {
      */
     public static <R> boolean afterReadRow(List<ExcelRowReadListener<R>> readListeners, R r, int rowNum) {
         boolean isStop = false;
-        if (readListeners != null) {
-            for (ExcelRowReadListener<R> readListener : readListeners) {
-                isStop = readListener.afterReadRow(r, rowNum);
-            }
+        for (ExcelRowReadListener<R> readListener : readListeners) {
+            isStop = readListener.afterReadRow(r, rowNum);
         }
         return isStop;
     }
@@ -91,9 +82,7 @@ public class ExcelReadEventProcessor {
      * @param <R>           使用 @Excel 注解的类类型
      */
     public static <R> void afterReadSheet(List<ExcelSheetReadListener<R>> readListeners, ExcelReadContext<R> readContext) {
-        if (readListeners != null) {
-            readListeners.forEach(listener -> listener.afterReadSheet(readContext));
-        }
+        readListeners.forEach(listener -> listener.afterReadSheet(readContext));
     }
 
     /**

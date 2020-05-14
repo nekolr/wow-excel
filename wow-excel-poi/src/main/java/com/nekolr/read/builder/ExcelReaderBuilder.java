@@ -1,7 +1,7 @@
 package com.nekolr.read.builder;
 
 import com.nekolr.metadata.Excel;
-import com.nekolr.metadata.ExcelReadResultListener;
+import com.nekolr.read.listener.ExcelReadResultListener;
 import com.nekolr.read.ExcelReadContext;
 import com.nekolr.read.ExcelReader;
 import com.nekolr.read.listener.*;
@@ -123,28 +123,28 @@ public class ExcelReaderBuilder<R> {
      * <p>
      * 是数据开始的行号，不是表头开始的行号
      *
-     * @param rowIndex 数据起始行号
+     * @param rowNum 数据起始行号
      * @return ExcelReaderBuilder
      */
-    public ExcelReaderBuilder<R> rowIndex(int rowIndex) {
-        if (rowIndex < 0) {
-            throw new IllegalArgumentException("Row index must be greater than or equal to 0");
+    public ExcelReaderBuilder<R> rowNum(int rowNum) {
+        if (rowNum < 0) {
+            throw new IllegalArgumentException("Row number must be greater than or equal to 0");
         }
-        this.readContext.setRowIndex(rowIndex);
+        this.readContext.setRowNum(rowNum);
         return this;
     }
 
     /**
      * 设置数据起始列号
      *
-     * @param colIndex 数据起始行号
+     * @param colNum 数据起始列号
      * @return ExcelReaderBuilder
      */
-    public ExcelReaderBuilder<R> colIndex(int colIndex) {
-        if (colIndex < 0) {
-            throw new IllegalArgumentException("column index must be greater than or equal to 0");
+    public ExcelReaderBuilder<R> colNum(int colNum) {
+        if (colNum < 0) {
+            throw new IllegalArgumentException("column number must be greater than or equal to 0");
         }
-        this.readContext.setColIndex(colIndex);
+        this.readContext.setColNum(colNum);
         return this;
     }
 

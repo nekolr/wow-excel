@@ -59,8 +59,8 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
         ExcelReadEventProcessor.beforeReadSheet(this.readContext.getSheetReadListeners(), this.readContext);
         Excel excel = this.readContext.getExcel();
         List<ExcelField> excelFieldList = excel.getFieldList();
-        int actualRowIndex = this.readContext.getRowIndex();
-        int colIndex = this.readContext.getColIndex();
+        int actualRowNum = this.readContext.getRowNum();
+        int colNum = this.readContext.getColNum();
         boolean saveResult = this.readContext.isSaveResult();
         R r;
         Object cellValue;
@@ -75,7 +75,7 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
             if (isStop) {
                 break;
             }
-            if (row.getRowNum() >= actualRowIndex) {
+            if (row.getRowNum() >= actualRowNum) {
                 try {
                     r = this.readContext.getExcelClass().newInstance();
                 } catch (InstantiationException | IllegalAccessException e) {
@@ -85,7 +85,7 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
                     ExcelField excelField = excelFieldList.get(col);
                     if (!excelField.isIgnore()) {
                         Field field = excelFieldList.get(col).getField();
-                        Cell cell = row.getCell(colIndex + col);
+                        Cell cell = row.getCell(colNum + col);
                         DataConverter dataConverter = this.getDataConverter(excelField);
                         if (cell != null) {
                             cellValue = ExcelUtils.getCellValue(cell, excelField, field);

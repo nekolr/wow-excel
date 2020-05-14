@@ -6,34 +6,29 @@ package com.nekolr;
 public class Constants {
 
     /**
-     * 默认的 sheet 名称
-     */
-    public static final String DEFAULT_SHEET_NAME = "Sheet1";
-
-    /**
      * 默认的 sheet 坐标
      */
     public static final int DEFAULT_SHEET_AT = 0;
 
     /**
-     * 默认的数据起始行
+     * 默认的数据起始行号
      */
-    public static final int DEFAULT_ROW_INDEX = 1;
+    public static final int DEFAULT_ROW_NUM = 1;
 
     /**
-     * 默认的数据起始列
+     * 默认的数据起始列号
      */
-    public static final int DEFAULT_COL_INDEX = 0;
+    public static final int DEFAULT_COL_NUM = 0;
 
     /**
-     * 写数据时默认的起始行
+     * 写数据时默认的起始行号
      */
-    public static final int DEFAULT_WRITE_ROW_INDEX = 0;
+    public static final int DEFAULT_WRITE_ROW_NUM = 0;
 
     /**
-     * 写数据时默认的起始列
+     * 写数据时默认的起始列号
      */
-    public static final int DEFAULT_WRITE_COL_INDEX = 0;
+    public static final int DEFAULT_WRITE_COL_NUM = 0;
 
     /**
      * 默认关闭流式 reader

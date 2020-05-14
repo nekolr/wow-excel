@@ -47,12 +47,12 @@ public class ExcelReadContext<R> {
     /**
      * 数据的行号（是数据开始的行号，不是表头开始的行号）
      */
-    private int rowIndex = Constants.DEFAULT_ROW_INDEX;
+    private int rowNum = Constants.DEFAULT_ROW_NUM;
 
     /**
      * 数据的列号
      */
-    private int colIndex = Constants.DEFAULT_COL_INDEX;
+    private int colNum = Constants.DEFAULT_COL_NUM;
 
     /**
      * workbook
