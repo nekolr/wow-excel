@@ -1,6 +1,14 @@
 # wow-excel
 让读写 excel 更简单。
 
+```xml
+<dependency>
+    <groupId>com.github.nekolr</groupId>
+    <artifactId>wow-excel-poi</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
 # 特性
 - 支持单级表头和多级表头
 - 支持流式读取和流式写入（可以避免 OOM）
