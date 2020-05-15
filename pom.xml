@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.nekolr</groupId>
+    <groupId>com.github.nekolr</groupId>
     <artifactId>wow-excel</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
@@ -38,12 +38,12 @@
         <dependencies>
             <!-- wow-excel -->
             <dependency>
-                <groupId>com.nekolr</groupId>
+                <groupId>com.github.nekolr</groupId>
                 <artifactId>wow-excel-poi</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.nekolr</groupId>
+                <groupId>com.github.nekolr</groupId>
                 <artifactId>wow-excel-esr</artifactId>
                 <version>${project.version}</version>
             </dependency>

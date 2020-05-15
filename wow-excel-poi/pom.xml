@@ -6,7 +6,7 @@
 
     <parent>
         <artifactId>wow-excel</artifactId>
-        <groupId>com.nekolr</groupId>
+        <groupId>com.github.nekolr</groupId>
         <version>1.0.0</version>
     </parent>
 
