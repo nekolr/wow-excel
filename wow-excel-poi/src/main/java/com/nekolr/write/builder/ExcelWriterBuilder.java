@@ -72,17 +72,6 @@ public class ExcelWriterBuilder {
     }
 
     /**
-     * 设置文档密码
-     *
-     * @param password 密码
-     * @return ExcelWriterBuilder
-     */
-    public ExcelWriterBuilder password(String password) {
-        this.writeContext.setPassword(password);
-        return this;
-    }
-
-    /**
      * 设置 sheet 名称
      *
      * @param sheetName sheet 名称

@@ -50,11 +50,6 @@ public class ExcelWriteContext {
     private String sheetName;
 
     /**
-     * 文档密码
-     */
-    private String password;
-
-    /**
      * workbook
      */
     private Workbook workbook;
