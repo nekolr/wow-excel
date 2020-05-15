@@ -46,7 +46,7 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
     public void init(ExcelWriteContext writeContext) {
         this.writeContext = writeContext;
         this.createWorkbook();
-        this.useDefaultStyle(this.writeContext);
+        this.initStyleWriteListeners(this.writeContext);
     }
 
     @Override
@@ -166,8 +166,6 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
 
     /**
      * 创建 Workbook
-     *
-     * @return Workbook
      */
     private void createWorkbook() {
         Workbook workbook = this.writeContext.getWorkbook();
@@ -230,15 +228,24 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
     }
 
     /**
-     * 使用默认样式
+     * 初始化样式监听器
      *
      * @param writeContext 写上下文
      */
-    private void useDefaultStyle(ExcelWriteContext writeContext) {
+    private void initStyleWriteListeners(ExcelWriteContext writeContext) {
         if (writeContext.isUseDefaultStyle()) {
             ExcelStyleWriteListener writeListener = new DefaultExcelStyleWriteListener();
-            writeListener.init(writeContext.getWorkbook());
             writeContext.addListener(writeListener);
         }
+        writeContext.getCellWriteListeners().forEach(listener -> {
+            if (listener instanceof ExcelStyleWriteListener) {
+                ((ExcelStyleWriteListener) listener).init(writeContext.getWorkbook());
+            }
+        });
+        writeContext.getRowWriteListeners().forEach(listener -> {
+            if (listener instanceof ExcelStyleWriteListener) {
+                ((ExcelStyleWriteListener) listener).init(writeContext.getWorkbook());
+            }
+        });
     }
 }
