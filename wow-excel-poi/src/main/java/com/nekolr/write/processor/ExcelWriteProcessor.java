@@ -31,6 +31,8 @@ public interface ExcelWriteProcessor {
 
     /**
      * 写大标题
+     *
+     * @param bigTitle 大标题
      */
     default void writeBigTitle(BigTitle bigTitle) {
     }

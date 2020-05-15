@@ -137,6 +137,7 @@ public class ExcelReadContext<R> {
      * @param readListener 读监听器
      * @return 读上下文
      */
+    @SuppressWarnings("unchecked")
     public ExcelReadContext<R> addListener(ExcelReadListener readListener) {
         if (readListener instanceof ExcelSheetReadListener) {
             this.sheetReadListeners.add((ExcelSheetReadListener<R>) readListener);

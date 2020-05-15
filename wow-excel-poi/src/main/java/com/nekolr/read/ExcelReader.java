@@ -36,6 +36,7 @@ public class ExcelReader<R> {
      *
      * @return ExcelReadProcessor
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private ExcelReadProcessor<R> lookupReadProcessor() {
         ServiceLoader<ExcelReadProcessor> processors = ServiceLoader.load(ExcelReadProcessor.class);
         for (ExcelReadProcessor<R> processor : processors) {

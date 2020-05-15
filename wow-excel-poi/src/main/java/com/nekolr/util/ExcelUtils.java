@@ -55,10 +55,11 @@ public class ExcelUtils {
      *
      * @param cell  单元格
      * @param value 值
+     * @param field 对应的表头字段元数据
      */
     public static void setCellValue(Cell cell, Object value, ExcelField field) {
         if (value == null) {
-            // do nothing
+            cell.setCellValue((String) null);
         } else if (value instanceof String) {
             cell.setCellValue(value.toString());
         } else if (value instanceof Number) {

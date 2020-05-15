@@ -32,7 +32,7 @@ public @interface Excel {
      * <p>
      * 在使用流式写（SXSSFWorkbook）时使用
      *
-     * @return
+     * @return 刷新之前保留在内存中的行数
      */
     int windowSize() default 500;
 
