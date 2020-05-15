@@ -98,7 +98,7 @@ public class Test {
 ```java
 @Excel(value = "计划书", type = WorkbookType.XLSX)
 @ToString
-public class Demo {
+public class Project {
 
     @ExcelField(value = {"项目", "项目"}, width = 4096)
     private String project;
