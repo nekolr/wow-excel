@@ -2,6 +2,7 @@ package com.nekolr.write.listener;
 
 import com.nekolr.metadata.ExcelField;
 import com.nekolr.write.ExcelWriteContext;
+import com.nekolr.write.listener.style.ExcelStyleWriteListener;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -24,10 +25,11 @@ public class ExcelWriteEventProcessor {
      * @param rowIndex       遍历行时的索引
      * @param colNum         当前列号
      * @param cellValue      单元格的数据
+     * @param isHead         是否是表头单元格
      */
     public static void afterWriteCell(List<ExcelCellWriteListener> writeListeners,
-                                      Sheet sheet, Row row, Cell cell, ExcelField field, int rowIndex, int colNum, Object cellValue) {
-        writeListeners.forEach(listener -> listener.afterWriteCell(sheet, row, cell, field, rowIndex, colNum, cellValue));
+                                      Sheet sheet, Row row, Cell cell, ExcelField field, int rowIndex, int colNum, Object cellValue, boolean isHead) {
+        writeListeners.forEach(listener -> listener.afterWriteCell(sheet, row, cell, field, rowIndex, colNum, cellValue, isHead));
     }
 
     /**
@@ -38,9 +40,10 @@ public class ExcelWriteEventProcessor {
      * @param row            当前行
      * @param rowEntity      当前行对用的实体数据
      * @param rowIndex       遍历行时的索引
+     * @param isHead         是否是表头所在行
      */
-    public static void afterWriteRow(List<ExcelRowWriteListener> writeListeners, Sheet sheet, Row row, Object rowEntity, int rowIndex) {
-        writeListeners.forEach(listener -> listener.afterWriteRow(sheet, row, rowEntity, rowIndex));
+    public static void afterWriteRow(List<ExcelRowWriteListener> writeListeners, Sheet sheet, Row row, Object rowEntity, int rowIndex, boolean isHead) {
+        writeListeners.forEach(listener -> listener.afterWriteRow(sheet, row, rowEntity, rowIndex, isHead));
     }
 
     /**
@@ -62,5 +65,19 @@ public class ExcelWriteEventProcessor {
      */
     public static void beforeFlush(List<ExcelWorkbookWriteListener> writeListeners, ExcelWriteContext writeContext) {
         writeListeners.forEach(listener -> listener.beforeFlush(writeContext));
+    }
+
+    /**
+     * 设置大标题的样式
+     *
+     * @param writeListeners 写监听器集合
+     * @param cell           大标题所在单元格
+     */
+    public static void setBigTitleStyle(List<ExcelCellWriteListener> writeListeners, Cell cell) {
+        writeListeners.forEach(listener -> {
+            if (listener instanceof ExcelStyleWriteListener) {
+                ((ExcelStyleWriteListener) listener).bigTitleStyle(cell);
+            }
+        });
     }
 }

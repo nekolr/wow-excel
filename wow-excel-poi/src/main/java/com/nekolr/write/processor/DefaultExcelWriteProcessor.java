@@ -9,6 +9,8 @@ import com.nekolr.util.ExcelUtils;
 import com.nekolr.util.ParamUtils;
 import com.nekolr.write.ExcelWriteContext;
 import com.nekolr.write.listener.ExcelWriteEventProcessor;
+import com.nekolr.write.listener.style.DefaultExcelStyleWriteListener;
+import com.nekolr.write.listener.style.ExcelStyleWriteListener;
 import com.nekolr.write.metadata.BigTitle;
 import com.nekolr.write.merge.LastCell;
 import com.nekolr.write.merge.OldRowCell;
@@ -44,6 +46,7 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
     public void init(ExcelWriteContext writeContext) {
         this.writeContext = writeContext;
         this.createWorkbook();
+        this.useDefaultStyle(this.writeContext);
     }
 
     @Override
@@ -68,17 +71,16 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
                     // 单元格赋值
                     ExcelUtils.setCellValue(cell, cellValue, excelField);
                     // Event: 写单元格结束后触发
-                    ExcelWriteEventProcessor.afterWriteCell(this.writeContext.getCellWriteListeners(), sheet, row, cell, excelField, r, colNum + col, cellValue);
+                    ExcelWriteEventProcessor.afterWriteCell(this.writeContext.getCellWriteListeners(), sheet, row, cell, excelField, r, colNum + col, cellValue, false);
                 }
                 // Event: 写行结束后触发
-                ExcelWriteEventProcessor.afterWriteRow(this.writeContext.getRowWriteListeners(), sheet, row, rowEntity, r);
+                ExcelWriteEventProcessor.afterWriteRow(this.writeContext.getRowWriteListeners(), sheet, row, rowEntity, r, false);
             }
         }
     }
 
     /**
      * 写表头
-     * TODO: 没给样式
      */
     @Override
     public void writeHead() {
@@ -115,7 +117,11 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
                         throw new ExcelWriteException("Auto merge failure", e);
                     }
                 }
+                // Event: 写单元格结束后触发
+                ExcelWriteEventProcessor.afterWriteCell(this.writeContext.getCellWriteListeners(), sheet, row, cell, excelField, r, colNum + col, title, true);
             }
+            // Event: 写行结束后触发
+            ExcelWriteEventProcessor.afterWriteRow(this.writeContext.getRowWriteListeners(), sheet, row, excelFieldList, r, true);
         }
     }
 
@@ -130,6 +136,8 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
             for (int col = bigTitle.getFirstColNum(); col < bigTitle.getLastColNum(); col++) {
                 Cell cell = row.createCell(col);
                 cell.setCellValue(bigTitle.getContent());
+                // Event: 设置大标题的样式
+                ExcelWriteEventProcessor.setBigTitleStyle(this.writeContext.getCellWriteListeners(), cell);
             }
         }
         sheet.addMergedRegion(new CellRangeAddress(rowNum, endRowNum, bigTitle.getFirstColNum(), bigTitle.getLastColNum()));
@@ -171,7 +179,7 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
                     break;
                 case XLSX:
                     if (this.writeContext.isStreamingWriterEnabled()) {
-                        this.writeContext.setWorkbook(new SXSSFWorkbook());
+                        this.writeContext.setWorkbook(new SXSSFWorkbook(excel.getWindowSize()));
                     } else {
                         this.writeContext.setWorkbook(new XSSFWorkbook());
                     }
@@ -218,6 +226,19 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
             return customRowNum;
         } else {
             return lastRowNum + 1;
+        }
+    }
+
+    /**
+     * 使用默认样式
+     *
+     * @param writeContext 写上下文
+     */
+    private void useDefaultStyle(ExcelWriteContext writeContext) {
+        if (writeContext.isUseDefaultStyle()) {
+            ExcelStyleWriteListener writeListener = new DefaultExcelStyleWriteListener();
+            writeListener.init(writeContext.getWorkbook());
+            writeContext.addListener(writeListener);
         }
     }
 }

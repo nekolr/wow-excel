@@ -21,6 +21,7 @@ public interface ExcelCellWriteListener extends ExcelWriteListener {
      * @param rowIndex  遍历行时的索引
      * @param colNum    列号
      * @param cellValue 单元格的数据
+     * @param isHead    是否是表头单元格
      */
-    void afterWriteCell(Sheet sheet, Row row, Cell cell, ExcelField field, int rowIndex, int colNum, Object cellValue);
+    void afterWriteCell(Sheet sheet, Row row, Cell cell, ExcelField field, int rowIndex, int colNum, Object cellValue, boolean isHead);
 }

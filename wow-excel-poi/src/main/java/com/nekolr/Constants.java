@@ -54,4 +54,9 @@ public class Constants {
      * 默认关闭写多级表头
      */
     public static final boolean WRITE_MULTI_HEAD_DISABLED = false;
+
+    /**
+     * 默认不使用默认样式
+     */
+    public static final boolean DEFAULT_STYLE_DISABLED = false;
 }

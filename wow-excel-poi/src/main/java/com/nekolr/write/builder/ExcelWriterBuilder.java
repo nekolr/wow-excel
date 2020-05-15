@@ -7,8 +7,8 @@ import com.nekolr.write.listener.ExcelCellWriteListener;
 import com.nekolr.write.listener.ExcelRowWriteListener;
 import com.nekolr.write.listener.ExcelSheetWriteListener;
 import com.nekolr.write.listener.ExcelWorkbookWriteListener;
+import com.nekolr.write.listener.style.ExcelStyleWriteListener;
 
-import java.io.File;
 import java.io.OutputStream;
 import java.util.Arrays;
 
@@ -220,6 +220,28 @@ public class ExcelWriterBuilder {
     }
 
     /**
+     * 设置写样式的监听器
+     *
+     * @param writeListener 写监听器
+     * @return ExcelWriterBuilder
+     */
+    public ExcelWriterBuilder styleListener(ExcelStyleWriteListener writeListener) {
+        this.writeContext.addListener(writeListener);
+        return this;
+    }
+
+    /**
+     * 设置写样式的监听器集合
+     *
+     * @param writeListeners 写监听器集合
+     * @return ExcelWriterBuilder
+     */
+    public ExcelWriterBuilder styleListeners(ExcelStyleWriteListener[] writeListeners) {
+        Arrays.stream(writeListeners).forEach(this.writeContext::addListener);
+        return this;
+    }
+
+    /**
      * 启用写多级表头
      *
      * @return ExcelWriterBuilder
@@ -235,7 +257,7 @@ public class ExcelWriterBuilder {
      * @return ExcelWriterBuilder
      */
     public ExcelWriterBuilder defaultStyle() {
-
+        this.writeContext.setUseDefaultStyle(true);
         return this;
     }
 

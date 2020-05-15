@@ -6,6 +6,7 @@ import com.nekolr.write.metadata.BigTitle;
 import com.nekolr.write.processor.DefaultExcelWriteProcessor;
 import com.nekolr.write.processor.ExcelWriteProcessor;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -41,10 +42,13 @@ public class ExcelWriter {
     private ExcelWriteProcessor lookupWriteProcessor() {
         ServiceLoader<ExcelWriteProcessor> processors = ServiceLoader.load(ExcelWriteProcessor.class);
         for (ExcelWriteProcessor processor : processors) {
+            processor.init(this.writeContext);
             return processor;
         }
         // 在找不到其他处理器的情况下返回默认的处理器
-        return new DefaultExcelWriteProcessor();
+        ExcelWriteProcessor processor = new DefaultExcelWriteProcessor();
+        processor.init(this.writeContext);
+        return processor;
     }
 
     /**
@@ -53,7 +57,7 @@ public class ExcelWriter {
      * @return ExcelWriter
      */
     public ExcelWriter writeBigTitle(BigTitle bigTitle) {
-        this.doWriteBigTitle(bigTitle);
+        this.writeProcessor.writeBigTitle(bigTitle);
         return this;
     }
 
@@ -63,7 +67,7 @@ public class ExcelWriter {
      * @return ExcelWriter
      */
     public ExcelWriter writeHead() {
-        this.doWriteHead();
+        this.writeProcessor.writeHead();
         return this;
     }
 
@@ -74,34 +78,8 @@ public class ExcelWriter {
      * @return ExcelWriter
      */
     public ExcelWriter write(List<?> data) {
-        this.doWrite(data);
-        return this;
-    }
-
-    /**
-     * 执行写
-     *
-     * @param data 数据集合
-     */
-    private void doWrite(List<?> data) {
-        this.writeProcessor.init(this.writeContext);
         this.writeProcessor.write(data);
-    }
-
-    /**
-     * 执行写表头
-     */
-    private void doWriteHead() {
-        this.writeProcessor.init(this.writeContext);
-        this.writeProcessor.writeHead();
-    }
-
-    /**
-     * 执行写大标题
-     */
-    private void doWriteBigTitle(BigTitle bigTitle) {
-        this.writeProcessor.init(this.writeContext);
-        this.writeProcessor.writeBigTitle(bigTitle);
+        return this;
     }
 
     /**
@@ -129,6 +107,8 @@ public class ExcelWriter {
                 e.printStackTrace();
             }
         }
-
+        if (workbook instanceof SXSSFWorkbook) {
+            ((SXSSFWorkbook) workbook).dispose();
+        }
     }
 }

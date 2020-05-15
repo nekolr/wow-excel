@@ -16,7 +16,6 @@ public class StringDoubleDataConverter implements DataConverter {
 
     @Override
     public Object toExcelAttribute(ExcelField field, Object attrValue) {
-        // TODO:
-        return null;
+        return attrValue == null ? null : attrValue.toString();
     }
 }

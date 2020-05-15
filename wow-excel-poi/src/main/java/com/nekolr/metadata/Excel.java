@@ -31,6 +31,11 @@ public class Excel {
     private List<ExcelField> fieldList;
 
     /**
+     * 刷新之前保留在内存中的行数
+     */
+    private int windowSize;
+
+    /**
      * 加载到并常驻内存中的数据行数
      */
     private int rowCacheSize;
@@ -41,8 +46,7 @@ public class Excel {
     private int bufferSize;
 
     /**
-     * 默认情况下，xlsx 文档的 /xl/sharedStrings.xml 数据存储在内存中，这可能会导致内存问题，
-     * 使用此选项将此数据存储在临时文件中（H2 database）
+     * 默认情况下，xlsx 文档的 /xl/sharedStrings.xml 数据存储在内存中，这可能会导致内存问题，使用此选项将此数据存储在临时文件中（H2 database）
      */
     private boolean useSstTempFile;
 

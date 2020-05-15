@@ -16,6 +16,7 @@ public interface ExcelRowWriteListener extends ExcelWriteListener {
      * @param row       当前行
      * @param rowEntity 当前行对应的实体
      * @param rowIndex  遍历行时的索引
+     * @param isHead    是否是表头所在行
      */
-    void afterWriteRow(Sheet sheet, Row row, Object rowEntity, int rowIndex);
+    void afterWriteRow(Sheet sheet, Row row, Object rowEntity, int rowIndex, boolean isHead);
 }

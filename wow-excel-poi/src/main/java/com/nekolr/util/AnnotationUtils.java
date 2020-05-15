@@ -92,6 +92,7 @@ public class AnnotationUtils {
         excelBean.setExcelName(excel.value());
         excelBean.setWorkbookType(excel.type());
         excelBean.setRowCacheSize(excel.rowCacheSize());
+        excelBean.setWindowSize(excel.windowSize());
         excelBean.setBufferSize(excel.bufferSize());
         excelBean.setFieldList(excelFieldList);
         excelBean.setUseSstTempFile(excel.useSstTempFile());

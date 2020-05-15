@@ -65,6 +65,11 @@ public class ExcelWriteContext {
     private Sheet sheet;
 
     /**
+     * 是否使用默认的样式，默认不使用
+     */
+    private boolean useDefaultStyle = Constants.DEFAULT_STYLE_DISABLED;
+
+    /**
      * 是否开启流式写，默认关闭
      */
     private boolean streamingWriterEnabled = Constants.STREAMING_WRITER_DISABLED;
