@@ -101,6 +101,8 @@ public class DefaultExcelStyleWriteListener implements ExcelStyleWriteListener {
             cellStyle.setWrapText(true);
             // 设置格式，使用内建格式
             cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat(field.getFormat()));
+
+            this.bodyStyleCache.put(colNum, cellStyle);
         }
         cell.setCellStyle(cellStyle);
     }
