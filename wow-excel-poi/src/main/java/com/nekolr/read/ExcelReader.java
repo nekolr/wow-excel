@@ -39,10 +39,13 @@ public class ExcelReader<R> {
     private ExcelReadProcessor<R> lookupReadProcessor() {
         ServiceLoader<ExcelReadProcessor> processors = ServiceLoader.load(ExcelReadProcessor.class);
         for (ExcelReadProcessor<R> processor : processors) {
+            processor.init(this.readContext);
             return processor;
         }
         // 在找不到其他处理器的情况下返回默认的处理器
-        return new DefaultExcelReadProcessor<>();
+        ExcelReadProcessor<R> processor = new DefaultExcelReadProcessor<>();
+        processor.init(this.readContext);
+        return processor;
     }
 
     /**
@@ -50,7 +53,7 @@ public class ExcelReader<R> {
      */
     public void read() {
         try {
-            this.doRead();
+            this.readProcessor.read();
         } finally {
             this.close();
         }
@@ -65,19 +68,11 @@ public class ExcelReader<R> {
         List<R> list = new ArrayList<>();
         try {
             this.readContext.setReadResultListener(list::addAll);
-            this.doRead();
+            this.readProcessor.read();
         } finally {
             this.close();
         }
         return list;
-    }
-
-    /**
-     * 执行读
-     */
-    private void doRead() {
-        this.readProcessor.init(this.readContext);
-        this.readProcessor.read();
     }
 
     /**
