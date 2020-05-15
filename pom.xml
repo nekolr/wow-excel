@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <name>wow-excel</name>
     <url>https://github.com/nekolr/wow-excel</url>
+    <description>Make reading and writing excel easier</description>
 
     <modules>
         <module>wow-excel-poi</module>
