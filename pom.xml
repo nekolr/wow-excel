@@ -67,12 +67,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <scm>
-        <connection>scm:git@github.com:nekolr/wow-excel.git</connection>
-        <developerConnection>scm:git@github.com:nekolr/wow-excel.git</developerConnection>
-        <url>git@github.com:nekolr/wow-excel.git</url>
-    </scm>
-
     <licenses>
         <license>
             <name>MIT</name>
@@ -80,9 +74,28 @@
         </license>
     </licenses>
 
+    <scm>
+        <url>https://github.com/nekolr/wow-excel.git</url>
+        <connection>scm:git:git://github.com/nekolr/wow-excel.git</connection>
+        <developerConnection>scm:git:ssh://github.com/nekolr/wow-excel.git</developerConnection>
+    </scm>
+
+    <issueManagement>
+        <system>Github Issue</system>
+        <url>https://github.com/nekolr/wow-excel/issues</url>
+    </issueManagement>
+
+    <developers>
+        <developer>
+            <name>nekolr</name>
+            <email>excalibll@163.com</email>
+            <url>https://github.com/nekolr</url>
+        </developer>
+    </developers>
+
     <build>
         <plugins>
-            <!-- compile -->
+            <!-- Compile -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -92,7 +105,7 @@
                     <target>${compile.version}</target>
                 </configuration>
             </plugin>
-            <!-- javadoc -->
+            <!-- Javadoc -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -108,5 +121,79 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Source -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>oss</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Compile -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.8.1</version>
+                        <configuration>
+                            <source>${compile.version}</source>
+                            <target>${compile.version}</target>
+                        </configuration>
+                    </plugin>
+                    <!-- Javadoc -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.1.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Gpg Signature -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>oss</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>snapshot</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>release</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 
 </project>
