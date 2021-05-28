@@ -60,7 +60,7 @@ public class Test {
 那么对应的实体应该是这样的：
 
 ```java
-@Excel(value = "计划书", type = ExcelType.XLS)
+@Excel(value = "计划书", type = WorkbookType.XLS)
 @ToString
 public class Project {
 
