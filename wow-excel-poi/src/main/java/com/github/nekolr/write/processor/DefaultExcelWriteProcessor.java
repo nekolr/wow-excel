@@ -102,6 +102,8 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
                 Cell cell = row.createCell(colNum + col);
                 // 设置表头名称
                 cell.setCellValue(title);
+                // 设置列宽度
+                sheet.setColumnWidth(colNum + col, excelField.getWidth());
                 // 需要写多级表头
                 if (this.writeContext.isMultiHead()) {
                     if (lastCell == null) {
