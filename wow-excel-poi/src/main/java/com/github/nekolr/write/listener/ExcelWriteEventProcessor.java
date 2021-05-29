@@ -1,7 +1,7 @@
 package com.github.nekolr.write.listener;
 
 import com.github.nekolr.write.ExcelWriteContext;
-import com.github.nekolr.metadata.ExcelField;
+import com.github.nekolr.metadata.ExcelFieldBean;
 import com.github.nekolr.write.listener.style.ExcelStyleWriteListener;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -28,7 +28,7 @@ public class ExcelWriteEventProcessor {
      * @param isHead         是否是表头单元格
      */
     public static void afterWriteCell(List<ExcelCellWriteListener> writeListeners,
-                                      Sheet sheet, Row row, Cell cell, ExcelField field, int rowIndex, int colNum, Object cellValue, boolean isHead) {
+                                      Sheet sheet, Row row, Cell cell, ExcelFieldBean field, int rowIndex, int colNum, Object cellValue, boolean isHead) {
         writeListeners.forEach(listener -> listener.afterWriteCell(sheet, row, cell, field, rowIndex, colNum, cellValue, isHead));
     }
 

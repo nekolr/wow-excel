@@ -1,6 +1,6 @@
 package com.github.nekolr.write.listener.style;
 
-import com.github.nekolr.metadata.ExcelField;
+import com.github.nekolr.metadata.ExcelFieldBean;
 import com.github.nekolr.write.listener.ExcelCellWriteListener;
 import com.github.nekolr.write.listener.ExcelRowWriteListener;
 import org.apache.poi.ss.usermodel.Cell;
@@ -37,7 +37,7 @@ public interface ExcelStyleWriteListener extends ExcelRowWriteListener, ExcelCel
      * @param rowIndex  遍历行时的索引
      * @param colNum    列号
      */
-    default void headStyle(Row row, Cell cell, ExcelField field, Object cellValue, int rowIndex, int colNum) {
+    default void headStyle(Row row, Cell cell, ExcelFieldBean field, Object cellValue, int rowIndex, int colNum) {
     }
 
     /**
@@ -50,5 +50,5 @@ public interface ExcelStyleWriteListener extends ExcelRowWriteListener, ExcelCel
      * @param rowIndex  遍历行时的索引
      * @param colNum    列号
      */
-    void bodyStyle(Row row, Cell cell, ExcelField field, Object cellValue, int rowIndex, int colNum);
+    void bodyStyle(Row row, Cell cell, ExcelFieldBean field, Object cellValue, int rowIndex, int colNum);
 }

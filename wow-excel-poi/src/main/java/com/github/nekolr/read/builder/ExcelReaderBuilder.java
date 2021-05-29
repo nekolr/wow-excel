@@ -1,7 +1,7 @@
 package com.github.nekolr.read.builder;
 
 import com.github.nekolr.read.ExcelReadContext;
-import com.github.nekolr.metadata.Excel;
+import com.github.nekolr.metadata.ExcelBean;
 import com.github.nekolr.read.listener.*;
 import com.github.nekolr.read.ExcelReader;
 
@@ -43,7 +43,7 @@ public class ExcelReaderBuilder<R> {
      * @param excel 注解元数据
      * @return ExcelReaderBuilder
      */
-    public ExcelReaderBuilder<R> metadata(Excel excel) {
+    public ExcelReaderBuilder<R> metadata(ExcelBean excel) {
         this.readContext.setExcel(excel);
         return this;
     }

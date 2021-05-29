@@ -1,15 +1,13 @@
 package com.github.nekolr.util;
 
+import com.github.nekolr.annotation.Excel;
 import com.github.nekolr.annotation.ExcelField;
-import com.github.nekolr.metadata.Excel;
+import com.github.nekolr.metadata.ExcelBean;
+import com.github.nekolr.metadata.ExcelFieldBean;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -24,18 +22,19 @@ public class AnnotationUtils {
      * @param ignores    需要忽略的表头字段
      * @return 映射后的实体类
      */
-    public static Excel toReadBean(Class<?> excelClass, String... ignores) {
-        return toBean(excelClass, null, field -> {
-            ExcelField fieldAnnotation = field.getAnnotation(ExcelField.class);
-            com.github.nekolr.metadata.ExcelField excelField = buildExcelField(field, fieldAnnotation);
+    public static ExcelBean toReadBean(Class<?> excelClass, String... ignores) {
+        ExcelBean excelBean = buildExcelBean(excelClass);
+        List<ExcelFieldBean> excelFieldBeans = buildExcelFieldBeans(excelClass);
+        excelFieldBeans.stream().forEach(excelFieldBean -> {
             // 如果忽略父级表头，那么所有的子表头都会忽略
-            for (String title : fieldAnnotation.value()) {
+            for (String title : excelFieldBean.getTitles()) {
                 if (ParamUtils.contains(ignores, title)) {
-                    excelField.setIgnore(true);
+                    excelFieldBean.setIgnore(true);
                 }
             }
-            return excelField;
         });
+        excelBean.setFieldList(excelFieldBeans);
+        return excelBean;
     }
 
     /**
@@ -45,78 +44,73 @@ public class AnnotationUtils {
      * @param ignores    需要忽略的表头字段
      * @return 映射后的实体类
      */
-    public static Excel toWriteBean(Class<?> excelClass, String... ignores) {
-        return toBean(excelClass, field -> {
-            ExcelField fieldAnnotation = field.getAnnotation(ExcelField.class);
+    public static ExcelBean toWriteBean(Class<?> excelClass, String... ignores) {
+        ExcelBean excelBean = buildExcelBean(excelClass);
+        List<ExcelFieldBean> excelFieldBeans = buildExcelFieldBeans(excelClass);
+        excelFieldBeans = excelFieldBeans.stream().filter(excelFieldBean -> {
             // 如果忽略父级表头，那么所有的子表头都会忽略
-            for (String title : fieldAnnotation.value()) {
+            for (String title : excelFieldBean.getTitles()) {
                 if (ParamUtils.contains(ignores, title)) {
                     return false;
                 }
             }
             return true;
-        }, field -> {
-            ExcelField fieldAnnotation = field.getAnnotation(ExcelField.class);
-            return buildExcelField(field, fieldAnnotation);
-        });
+        }).collect(Collectors.toList());
+        excelBean.setFieldList(excelFieldBeans);
+        return excelBean;
     }
 
     /**
      * 将 Excel 注解元数据转换成实体类
      *
      * @param excelClass Excel 注解修饰的类
-     * @param predicate  筛选的谓语
-     * @param function   转换的方法
      * @return 映射后的实体类
      */
-    private static Excel toBean(Class<?> excelClass, Predicate<? super Field> predicate,
-                                Function<? super Field, ? extends com.github.nekolr.metadata.ExcelField> function) {
-        com.github.nekolr.annotation.Excel excel = excelClass.getAnnotation(com.github.nekolr.annotation.Excel.class);
+    private static ExcelBean buildExcelBean(Class<?> excelClass) {
+        Excel excel = excelClass.getAnnotation(Excel.class);
         ParamUtils.requireNotNull(excel, "@Excel annotation was not found on the " + excelClass);
-        Field[] fieldArray = excelClass.getDeclaredFields();
-        List<Field> fieldList = new ArrayList<>(Arrays.asList(fieldArray));
-        List<com.github.nekolr.metadata.ExcelField> excelFieldList = fieldList.stream()
-                .filter(field -> field.isAnnotationPresent(ExcelField.class))
-                .sorted(Comparator.comparing(field -> field.getAnnotation(ExcelField.class).order()))
-                .filter(field -> {
-                    if (predicate == null) {
-                        return true;
-                    } else {
-                        return predicate.test(field);
-                    }
-                })
-                .map(function)
-                .collect(Collectors.toList());
-
-        Excel excelBean = new Excel();
+        ExcelBean excelBean = new ExcelBean();
         excelBean.setExcelName(excel.value());
         excelBean.setWorkbookType(excel.type());
         excelBean.setRowCacheSize(excel.rowCacheSize());
         excelBean.setWindowSize(excel.windowSize());
         excelBean.setBufferSize(excel.bufferSize());
-        excelBean.setFieldList(excelFieldList);
         excelBean.setUseSstTempFile(excel.useSstTempFile());
         excelBean.setEncryptSstTempFile(excel.encryptSstTempFile());
         return excelBean;
     }
 
     /**
+     * 将所有使用 @ExcelField 注解的字段转换并组合成对应的实体类列表
+     *
+     * @param excelClass Excel 注解修饰的类
+     * @return ExcelFieldBean 集合
+     */
+    private static List<ExcelFieldBean> buildExcelFieldBeans(Class<?> excelClass) {
+        Field[] fields = excelClass.getDeclaredFields();
+        List<ExcelFieldBean> excelFieldList = Arrays.stream(fields)
+                .map(field -> buildExcelFieldBean(field, field.getAnnotation(ExcelField.class)))
+                .collect(Collectors.toList());
+        return excelFieldList;
+    }
+
+    /**
      * 构建 ExcelField
      *
-     * @param field           字段
-     * @param fieldAnnotation 字段上的 @ExcelField 注解
-     * @return ExcelField
+     * @param field      字段
+     * @param excelField 字段上的 @ExcelField 注解
+     * @return ExcelFieldBean
      */
-    private static com.github.nekolr.metadata.ExcelField buildExcelField(Field field, ExcelField fieldAnnotation) {
-        com.github.nekolr.metadata.ExcelField excelField = new com.github.nekolr.metadata.ExcelField();
-        excelField.setTitles(fieldAnnotation.value());
-        excelField.setOrder(fieldAnnotation.order());
-        excelField.setAllowEmpty(fieldAnnotation.allowEmpty());
-        excelField.setAutoTrim(fieldAnnotation.autoTrim());
-        excelField.setFormat(fieldAnnotation.format());
-        excelField.setWidth(fieldAnnotation.width());
-        excelField.setConverter(fieldAnnotation.converter());
-        excelField.setField(field);
-        return excelField;
+    private static ExcelFieldBean buildExcelFieldBean(Field field, ExcelField excelField) {
+        ExcelFieldBean excelFieldBean = new ExcelFieldBean();
+        excelFieldBean.setTitles(excelField.value());
+        excelFieldBean.setOrder(excelField.order());
+        excelFieldBean.setAllowEmpty(excelField.allowEmpty());
+        excelFieldBean.setAutoTrim(excelField.autoTrim());
+        excelFieldBean.setFormat(excelField.format());
+        excelFieldBean.setWidth(excelField.width());
+        excelFieldBean.setConverter(excelField.converter());
+        excelFieldBean.setField(field);
+        return excelFieldBean;
     }
 }

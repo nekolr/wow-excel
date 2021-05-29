@@ -1,6 +1,6 @@
 package com.github.nekolr.read.listener;
 
-import com.github.nekolr.metadata.ExcelField;
+import com.github.nekolr.metadata.ExcelFieldBean;
 
 /**
  * 单元格级别的读监听器
@@ -17,5 +17,5 @@ public interface ExcelCellReadListener extends ExcelReadListener {
      * @param colNum    列号
      * @return 处理后的单元格值
      */
-    Object afterReadCell(ExcelField field, Object cellValue, int rowNum, int colNum);
+    Object afterReadCell(ExcelFieldBean field, Object cellValue, int rowNum, int colNum);
 }

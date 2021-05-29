@@ -1,6 +1,6 @@
 package com.github.nekolr.write.listener;
 
-import com.github.nekolr.metadata.ExcelField;
+import com.github.nekolr.metadata.ExcelFieldBean;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -23,5 +23,5 @@ public interface ExcelCellWriteListener extends ExcelWriteListener {
      * @param cellValue 单元格的数据
      * @param isHead    是否是表头单元格
      */
-    void afterWriteCell(Sheet sheet, Row row, Cell cell, ExcelField field, int rowIndex, int colNum, Object cellValue, boolean isHead);
+    void afterWriteCell(Sheet sheet, Row row, Cell cell, ExcelFieldBean field, int rowIndex, int colNum, Object cellValue, boolean isHead);
 }

@@ -3,7 +3,7 @@ package com.github.nekolr.read.processor;
 import com.github.nekolr.enums.WorkbookType;
 import com.github.nekolr.read.ExcelReadContext;
 import com.github.pjfanning.xlsx.StreamingReader;
-import com.github.nekolr.metadata.Excel;
+import com.github.nekolr.metadata.ExcelBean;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
@@ -16,7 +16,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 public class ExcelStreamReadProcessor<R> extends DefaultExcelReadProcessor<R> {
     @Override
     public void init(ExcelReadContext<R> readContext) {
-        Excel excel = readContext.getExcel();
+        ExcelBean excel = readContext.getExcel();
         if (readContext.isStreamingReaderEnabled()) {
             if (excel.getWorkbookType().equals(WorkbookType.XLSX)) {
                 Workbook workbook;

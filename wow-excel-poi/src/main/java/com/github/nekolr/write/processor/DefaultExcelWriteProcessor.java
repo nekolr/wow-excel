@@ -3,8 +3,8 @@ package com.github.nekolr.write.processor;
 import com.github.nekolr.exception.ExcelWriteException;
 import com.github.nekolr.exception.ExcelWriteInitException;
 import com.github.nekolr.metadata.DataConverter;
-import com.github.nekolr.metadata.Excel;
-import com.github.nekolr.metadata.ExcelField;
+import com.github.nekolr.metadata.ExcelBean;
+import com.github.nekolr.metadata.ExcelFieldBean;
 import com.github.nekolr.write.ExcelWriteContext;
 import com.github.nekolr.write.listener.ExcelWriteEventProcessor;
 import com.github.nekolr.write.listener.style.DefaultExcelStyleWriteListener;
@@ -54,16 +54,16 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
     @Override
     public void write(List<?> data) {
         if (data != null && data.size() != 0) {
-            Excel excel = this.writeContext.getExcel();
+            ExcelBean excel = this.writeContext.getExcel();
             Sheet sheet = this.getOrCreateSheet();
             int rowNum = this.getRowNum(sheet);
             int colNum = this.writeContext.getColNum();
-            List<ExcelField> excelFieldList = excel.getFieldList();
+            List<ExcelFieldBean> excelFieldList = excel.getFieldList();
             for (int r = 0; r < data.size(); r++) {
                 Object rowEntity = data.get(r);
                 Row row = sheet.createRow(rowNum + r);
                 for (int col = 0; col < excelFieldList.size(); col++) {
-                    ExcelField excelField = excelFieldList.get(col);
+                    ExcelFieldBean excelField = excelFieldList.get(col);
                     Cell cell = row.createCell(colNum + col);
                     DataConverter dataConverter = this.getDataConverter(excelField);
                     // 获取属性值
@@ -90,13 +90,13 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
         Sheet sheet = this.getOrCreateSheet();
         int rowNum = this.getRowNum(sheet);
         int colNum = this.writeContext.getColNum();
-        Excel excel = this.writeContext.getExcel();
-        List<ExcelField> excelFieldList = excel.getFieldList();
+        ExcelBean excel = this.writeContext.getExcel();
+        List<ExcelFieldBean> excelFieldList = excel.getFieldList();
         // 第一个字段元数据的标题数组的长度就代表了所有表头占用的行数
         for (int r = 0, rowSize = excelFieldList.get(0).getTitles().length; r < rowSize; r++) {
             Row row = sheet.createRow(rowNum + r);
             for (int col = 0, colSize = excelFieldList.size(); col < colSize; col++) {
-                ExcelField excelField = excelFieldList.get(col);
+                ExcelFieldBean excelField = excelFieldList.get(col);
                 String[] titles = excelField.getTitles();
                 String title = titles[r];
                 Cell cell = row.createCell(colNum + col);
@@ -153,7 +153,7 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
      * @param excelField 表头字段对应的元数据
      * @return 数据转换器
      */
-    private DataConverter getDataConverter(ExcelField excelField) {
+    private DataConverter getDataConverter(ExcelFieldBean excelField) {
         Class<? extends DataConverter> converterClass = excelField.getConverter();
         DataConverter dataConverter = this.writeContext.getConverterCache().get(converterClass);
         if (dataConverter == null) {
@@ -174,7 +174,7 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
     private void createWorkbook() {
         Workbook workbook = this.writeContext.getWorkbook();
         if (workbook == null) {
-            Excel excel = this.writeContext.getExcel();
+            ExcelBean excel = this.writeContext.getExcel();
             switch (excel.getWorkbookType()) {
                 case XLS:
                     this.writeContext.setWorkbook(new HSSFWorkbook());

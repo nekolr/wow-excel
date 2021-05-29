@@ -1,6 +1,6 @@
 package com.github.nekolr.read.listener;
 
-import com.github.nekolr.metadata.ExcelField;
+import com.github.nekolr.metadata.ExcelFieldBean;
 import com.github.nekolr.read.ExcelReadContext;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class ExcelReadEventProcessor {
      * @param colNum        列号
      * @return 处理后的单元格值
      */
-    public static Object afterReadCell(List<ExcelCellReadListener> readListeners, ExcelField field,
+    public static Object afterReadCell(List<ExcelCellReadListener> readListeners, ExcelFieldBean field,
                                        Object cellValue, int rowNum, int colNum) {
         for (ExcelCellReadListener readListener : readListeners) {
             cellValue = readListener.afterReadCell(field, cellValue, rowNum, colNum);
@@ -48,7 +48,7 @@ public class ExcelReadEventProcessor {
      * @param colNum        所在列
      * @return 处理后的单元格值
      */
-    public static Object afterReadEmptyCell(List<ExcelEmptyCellReadListener> readListeners, ExcelField field,
+    public static Object afterReadEmptyCell(List<ExcelEmptyCellReadListener> readListeners, ExcelFieldBean field,
                                             int rowNum, int colNum) {
         Object cellValue = null;
         for (ExcelEmptyCellReadListener readListener : readListeners) {

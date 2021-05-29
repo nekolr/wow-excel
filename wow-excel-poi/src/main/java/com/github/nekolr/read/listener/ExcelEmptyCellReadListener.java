@@ -1,6 +1,6 @@
 package com.github.nekolr.read.listener;
 
-import com.github.nekolr.metadata.ExcelField;
+import com.github.nekolr.metadata.ExcelFieldBean;
 
 /**
  * 当单元格不存在或者单元格的值为空时，可以使用该监听器处理
@@ -15,5 +15,5 @@ public interface ExcelEmptyCellReadListener extends ExcelReadListener {
      * @param colNum 列号
      * @return 处理后的值
      */
-    Object handleEmpty(ExcelField field, int rowNum, int colNum);
+    Object handleEmpty(ExcelFieldBean field, int rowNum, int colNum);
 }

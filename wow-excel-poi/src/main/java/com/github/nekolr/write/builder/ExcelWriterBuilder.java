@@ -7,7 +7,7 @@ import com.github.nekolr.write.listener.ExcelRowWriteListener;
 import com.github.nekolr.write.listener.ExcelSheetWriteListener;
 import com.github.nekolr.write.listener.ExcelWorkbookWriteListener;
 import com.github.nekolr.write.listener.style.ExcelStyleWriteListener;
-import com.github.nekolr.metadata.Excel;
+import com.github.nekolr.metadata.ExcelBean;
 
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ public class ExcelWriterBuilder {
      * @param excel 注解元数据
      * @return ExcelWriterBuilder
      */
-    public ExcelWriterBuilder metadata(Excel excel) {
+    public ExcelWriterBuilder metadata(ExcelBean excel) {
         this.writeContext.setExcel(excel);
         return this;
     }

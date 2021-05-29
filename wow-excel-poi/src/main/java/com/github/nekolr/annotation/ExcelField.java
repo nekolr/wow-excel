@@ -58,13 +58,6 @@ public @interface ExcelField {
     String format() default "";
 
     /**
-     * 是否忽略此字段
-     *
-     * @return 是否忽略此字段
-     */
-    boolean ignore() default false;
-
-    /**
      * 数据转换器，提供数据转换功能
      *
      * @return 数据转换器
