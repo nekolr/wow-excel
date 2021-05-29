@@ -2,7 +2,7 @@ package com.github.nekolr;
 
 import com.github.nekolr.read.builder.ExcelReaderBuilder;
 import com.github.nekolr.write.builder.ExcelWriterBuilder;
-import com.github.nekolr.metadata.Excel;
+import com.github.nekolr.metadata.ExcelBean;
 import com.github.nekolr.util.AnnotationUtils;
 
 import java.io.*;
@@ -22,11 +22,11 @@ public class WoWExcel {
      * @return ExcelReaderBuilder
      */
     public static <R> ExcelReaderBuilder<R> createReaderBuilder(String filepath, Class<R> excelClass, String... ignores) {
-        Excel excel = AnnotationUtils.toReadBean(excelClass, ignores);
+        ExcelBean excelBean = AnnotationUtils.toReadBean(excelClass, ignores);
         ExcelReaderBuilder<R> excelReaderBuilder = new ExcelReaderBuilder<>();
         excelReaderBuilder.file(filepath);
         excelReaderBuilder.of(excelClass);
-        excelReaderBuilder.metadata(excel);
+        excelReaderBuilder.metadata(excelBean);
         return excelReaderBuilder;
     }
 
@@ -40,11 +40,11 @@ public class WoWExcel {
      * @return ExcelReaderBuilder
      */
     public static <R> ExcelReaderBuilder<R> createReaderBuilder(File file, Class<R> excelClass, String... ignores) {
-        Excel excel = AnnotationUtils.toReadBean(excelClass, ignores);
+        ExcelBean excelBean = AnnotationUtils.toReadBean(excelClass, ignores);
         ExcelReaderBuilder<R> excelReaderBuilder = new ExcelReaderBuilder<>();
         excelReaderBuilder.file(file);
         excelReaderBuilder.of(excelClass);
-        excelReaderBuilder.metadata(excel);
+        excelReaderBuilder.metadata(excelBean);
         return excelReaderBuilder;
     }
 
@@ -58,11 +58,11 @@ public class WoWExcel {
      * @return ExcelReaderBuilder
      */
     public static <R> ExcelReaderBuilder<R> createReaderBuilder(InputStream in, Class<R> excelClass, String... ignores) {
-        Excel excel = AnnotationUtils.toReadBean(excelClass, ignores);
+        ExcelBean excelBean = AnnotationUtils.toReadBean(excelClass, ignores);
         ExcelReaderBuilder<R> excelReaderBuilder = new ExcelReaderBuilder<>();
         excelReaderBuilder.file(in);
         excelReaderBuilder.of(excelClass);
-        excelReaderBuilder.metadata(excel);
+        excelReaderBuilder.metadata(excelBean);
         return excelReaderBuilder;
     }
 
@@ -75,9 +75,9 @@ public class WoWExcel {
      * @return ExcelWriterBuilder
      */
     public static ExcelWriterBuilder createWriterBuilder(OutputStream out, Class<?> excelClass, String... ignores) {
-        Excel excel = AnnotationUtils.toWriteBean(excelClass, ignores);
+        ExcelBean excelBean = AnnotationUtils.toWriteBean(excelClass, ignores);
         ExcelWriterBuilder excelWriterBuilder = new ExcelWriterBuilder();
-        excelWriterBuilder.metadata(excel);
+        excelWriterBuilder.metadata(excelBean);
         excelWriterBuilder.file(out);
         return excelWriterBuilder;
     }

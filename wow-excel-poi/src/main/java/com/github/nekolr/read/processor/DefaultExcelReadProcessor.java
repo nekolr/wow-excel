@@ -4,8 +4,8 @@ import com.github.nekolr.Constants;
 import com.github.nekolr.exception.ExcelReadException;
 import com.github.nekolr.exception.ExcelReadInitException;
 import com.github.nekolr.metadata.DataConverter;
-import com.github.nekolr.metadata.Excel;
-import com.github.nekolr.metadata.ExcelField;
+import com.github.nekolr.metadata.ExcelBean;
+import com.github.nekolr.metadata.ExcelFieldBean;
 import com.github.nekolr.read.ExcelReadContext;
 import com.github.nekolr.read.listener.ExcelEmptyCellReadListener;
 import com.github.nekolr.read.listener.ExcelReadEventProcessor;
@@ -59,8 +59,8 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
     private List<R> doRead(Sheet sheet) {
         // Event: 开始读之前触发
         ExcelReadEventProcessor.beforeReadSheet(this.readContext.getSheetReadListeners(), this.readContext);
-        Excel excel = this.readContext.getExcel();
-        List<ExcelField> excelFieldList = excel.getFieldList();
+        ExcelBean excel = this.readContext.getExcel();
+        List<ExcelFieldBean> excelFieldList = excel.getFieldList();
         int actualRowNum = this.readContext.getRowNum();
         int colNum = this.readContext.getColNum();
         boolean saveResult = this.readContext.isSaveResult();
@@ -84,7 +84,7 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
                     throw new ExcelReadInitException("Excel entity init failure: " + e.getMessage());
                 }
                 for (int col = 0; col < excelFieldList.size(); col++) {
-                    ExcelField excelField = excelFieldList.get(col);
+                    ExcelFieldBean excelField = excelFieldList.get(col);
                     if (!excelField.isIgnore()) {
                         Field field = excelFieldList.get(col).getField();
                         Cell cell = row.getCell(colNum + col);
@@ -134,7 +134,7 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
      * @param rowNum      行号
      * @param colNum      列号
      */
-    private Object handleEmpty(ExcelReadContext<R> readContext, ExcelField excelField, int rowNum, int colNum) {
+    private Object handleEmpty(ExcelReadContext<R> readContext, ExcelFieldBean excelField, int rowNum, int colNum) {
         List<ExcelEmptyCellReadListener> emptyReadListeners = readContext.getEmptyCellReadListeners();
         if (emptyReadListeners == null) {
             throw new ExcelReadInitException("If the field is not allowed empty, please specify a listener that handles null value.");
@@ -148,7 +148,7 @@ public class DefaultExcelReadProcessor<R> implements ExcelReadProcessor<R> {
      * @param excelField 表头字段对应的元数据
      * @return 数据转换器
      */
-    private DataConverter getDataConverter(ExcelField excelField) {
+    private DataConverter getDataConverter(ExcelFieldBean excelField) {
         Class<? extends DataConverter> converterClass = excelField.getConverter();
         DataConverter dataConverter = this.readContext.getConverterCache().get(converterClass);
         if (dataConverter == null) {

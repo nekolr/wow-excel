@@ -1,6 +1,6 @@
 package com.github.nekolr.write.listener.style;
 
-import com.github.nekolr.metadata.ExcelField;
+import com.github.nekolr.metadata.ExcelFieldBean;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.ss.usermodel.*;
 
@@ -56,7 +56,7 @@ public class DefaultExcelStyleWriteListener implements ExcelStyleWriteListener {
     }
 
     @Override
-    public void headStyle(Row row, Cell cell, ExcelField field, Object cellValue, int rowIndex, int colNum) {
+    public void headStyle(Row row, Cell cell, ExcelFieldBean field, Object cellValue, int rowIndex, int colNum) {
         CellStyle cellStyle = this.headStyleCache.get(colNum);
         if (cellStyle == null) {
             cellStyle = this.workbook.createCellStyle();
@@ -88,7 +88,7 @@ public class DefaultExcelStyleWriteListener implements ExcelStyleWriteListener {
     }
 
     @Override
-    public void bodyStyle(Row row, Cell cell, ExcelField field, Object cellValue, int rowIndex, int colNum) {
+    public void bodyStyle(Row row, Cell cell, ExcelFieldBean field, Object cellValue, int rowIndex, int colNum) {
         // 相同列使用相同的样式，使用缓存可以方便重用同一列的样式
         CellStyle cellStyle = this.bodyStyleCache.get(colNum);
         if (cellStyle == null) {
@@ -108,7 +108,7 @@ public class DefaultExcelStyleWriteListener implements ExcelStyleWriteListener {
     }
 
     @Override
-    public void afterWriteCell(Sheet sheet, Row row, Cell cell, ExcelField field, int rowIndex, int colNum, Object cellValue, boolean isHead) {
+    public void afterWriteCell(Sheet sheet, Row row, Cell cell, ExcelFieldBean field, int rowIndex, int colNum, Object cellValue, boolean isHead) {
         if (isHead) {
             // 首行表头
             if (rowIndex == 0) {

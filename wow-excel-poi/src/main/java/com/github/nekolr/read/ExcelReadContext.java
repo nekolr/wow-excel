@@ -4,6 +4,7 @@ import com.github.nekolr.annotation.Excel;
 import com.github.nekolr.Constants;
 import com.github.nekolr.convert.DefaultDataConverter;
 import com.github.nekolr.metadata.DataConverter;
+import com.github.nekolr.metadata.ExcelBean;
 import com.github.nekolr.read.listener.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -94,7 +95,7 @@ public class ExcelReadContext<R> {
      *
      * @see Excel
      */
-    private com.github.nekolr.metadata.Excel excel;
+    private ExcelBean excel;
 
     /**
      * 读 sheet 监听器集合

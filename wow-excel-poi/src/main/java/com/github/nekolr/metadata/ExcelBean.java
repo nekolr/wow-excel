@@ -9,7 +9,7 @@ import java.util.List;
  * Excel 实体
  */
 @Data
-public class Excel {
+public class ExcelBean {
 
     /**
      * Excel 名称
@@ -26,9 +26,9 @@ public class Excel {
     /**
      * 字段列表
      *
-     * @see ExcelField
+     * @see ExcelFieldBean
      */
-    private List<ExcelField> fieldList;
+    private List<ExcelFieldBean> fieldList;
 
     /**
      * 刷新之前保留在内存中的行数

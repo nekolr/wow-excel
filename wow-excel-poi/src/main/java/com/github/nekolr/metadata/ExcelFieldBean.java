@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
  * Excel 字段实体
  */
 @Data
-public class ExcelField {
+public class ExcelFieldBean {
 
     /**
      * 表头标题数组

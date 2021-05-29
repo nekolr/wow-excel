@@ -12,7 +12,7 @@ public interface DataConverter {
      * @param cellValue 单元格的值
      * @return 转换后的值
      */
-    Object toEntityAttribute(ExcelField field, Object cellValue);
+    Object toEntityAttribute(ExcelFieldBean field, Object cellValue);
 
     /**
      * 将实体属性的值按照 excel 单元格的数据类型进行转换
@@ -21,5 +21,5 @@ public interface DataConverter {
      * @param attrValue 实体属性的值
      * @return 转换后的值
      */
-    Object toExcelAttribute(ExcelField field, Object attrValue);
+    Object toExcelAttribute(ExcelFieldBean field, Object attrValue);
 }

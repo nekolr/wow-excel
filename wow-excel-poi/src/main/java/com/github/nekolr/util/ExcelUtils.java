@@ -1,7 +1,7 @@
 package com.github.nekolr.util;
 
 import com.github.nekolr.metadata.DataConverter;
-import com.github.nekolr.metadata.ExcelField;
+import com.github.nekolr.metadata.ExcelFieldBean;
 import com.github.nekolr.write.merge.LastCell;
 import com.github.nekolr.write.merge.OldRowCell;
 import org.apache.poi.ss.usermodel.Cell;
@@ -25,7 +25,7 @@ public class ExcelUtils {
      * @param field      对应的字段
      * @return 单元格的值
      */
-    public static Object getCellValue(Cell cell, ExcelField excelField, Field field) {
+    public static Object getCellValue(Cell cell, ExcelFieldBean excelField, Field field) {
         switch (cell.getCellType()) {
             case _NONE:
             case BLANK:
@@ -57,7 +57,7 @@ public class ExcelUtils {
      * @param value 值
      * @param field 对应的表头字段元数据
      */
-    public static void setCellValue(Cell cell, Object value, ExcelField field) {
+    public static void setCellValue(Cell cell, Object value, ExcelFieldBean field) {
         if (value == null) {
             cell.setCellValue((String) null);
         } else if (value instanceof String) {
@@ -87,7 +87,7 @@ public class ExcelUtils {
      * @param dataConverter 使用的数据转换器
      * @return 转换后的数据
      */
-    public static Object useReadConverter(Object value, ExcelField field, DataConverter dataConverter) {
+    public static Object useReadConverter(Object value, ExcelFieldBean field, DataConverter dataConverter) {
         return dataConverter.toEntityAttribute(field, value);
     }
 
@@ -99,7 +99,7 @@ public class ExcelUtils {
      * @param dataConverter 使用的数据转换器
      * @return 转换后的数据
      */
-    public static Object useWriteConverter(Object attrValue, ExcelField field, DataConverter dataConverter) {
+    public static Object useWriteConverter(Object attrValue, ExcelFieldBean field, DataConverter dataConverter) {
         return dataConverter.toExcelAttribute(field, attrValue);
     }
 
