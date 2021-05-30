@@ -25,14 +25,16 @@ public class AnnotationUtils {
     public static ExcelBean toReadBean(Class<?> excelClass, String... ignores) {
         ExcelBean excelBean = buildExcelBean(excelClass);
         List<ExcelFieldBean> excelFieldBeans = buildExcelFieldBeans(excelClass);
-        excelFieldBeans.stream().forEach(excelFieldBean -> {
-            // 如果忽略父级表头，那么所有的子表头都会忽略
-            for (String title : excelFieldBean.getTitles()) {
-                if (ParamUtils.contains(ignores, title)) {
-                    excelFieldBean.setIgnore(true);
+        if (ignores != null && ignores.length > 0) {
+            excelFieldBeans.stream().forEach(excelFieldBean -> {
+                // 如果忽略父级表头，那么所有的子表头都会忽略
+                for (String title : excelFieldBean.getTitles()) {
+                    if (ParamUtils.contains(ignores, title)) {
+                        excelFieldBean.setIgnore(true);
+                    }
                 }
-            }
-        });
+            });
+        }
         excelBean.setFieldList(excelFieldBeans);
         return excelBean;
     }
@@ -47,15 +49,17 @@ public class AnnotationUtils {
     public static ExcelBean toWriteBean(Class<?> excelClass, String... ignores) {
         ExcelBean excelBean = buildExcelBean(excelClass);
         List<ExcelFieldBean> excelFieldBeans = buildExcelFieldBeans(excelClass);
-        excelFieldBeans = excelFieldBeans.stream().filter(excelFieldBean -> {
-            // 如果忽略父级表头，那么所有的子表头都会忽略
-            for (String title : excelFieldBean.getTitles()) {
-                if (ParamUtils.contains(ignores, title)) {
-                    return false;
+        if (ignores != null && ignores.length > 0) {
+            excelFieldBeans = excelFieldBeans.stream().filter(excelFieldBean -> {
+                // 如果忽略父级表头，那么所有的子表头都会忽略
+                for (String title : excelFieldBean.getTitles()) {
+                    if (ParamUtils.contains(ignores, title)) {
+                        return false;
+                    }
                 }
-            }
-            return true;
-        }).collect(Collectors.toList());
+                return true;
+            }).collect(Collectors.toList());
+        }
         excelBean.setFieldList(excelFieldBeans);
         return excelBean;
     }
