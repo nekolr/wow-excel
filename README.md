@@ -5,7 +5,7 @@
 <dependency>
     <groupId>com.github.nekolr</groupId>
     <artifactId>wow-excel-poi</artifactId>
-    <version>1.0.4</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
