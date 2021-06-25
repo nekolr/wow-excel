@@ -93,6 +93,7 @@ public class AnnotationUtils {
     private static List<ExcelFieldBean> buildExcelFieldBeans(Class<?> excelClass) {
         Field[] fields = excelClass.getDeclaredFields();
         List<ExcelFieldBean> excelFieldList = Arrays.stream(fields)
+                .filter(field -> field.isAnnotationPresent(ExcelField.class))
                 .map(field -> buildExcelFieldBean(field, field.getAnnotation(ExcelField.class)))
                 .collect(Collectors.toList());
         return excelFieldList;
