@@ -21,7 +21,7 @@ public class ExcelStreamReadProcessor<R> extends DefaultExcelReadProcessor<R> {
             if (excel.getWorkbookType().equals(WorkbookType.XLSX)) {
                 Workbook workbook;
                 StreamingReader.Builder builder = StreamingReader.builder()
-                        .bufferSize(excel.getRowCacheSize())
+                        .rowCacheSize(excel.getRowCacheSize())
                         .bufferSize(excel.getBufferSize())
                         .setUseSstTempFile(excel.isUseSstTempFile())
                         .setEncryptSstTempFile(excel.isEncryptSstTempFile());
