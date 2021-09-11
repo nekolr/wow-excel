@@ -224,7 +224,8 @@ public class DefaultExcelWriteProcessor implements ExcelWriteProcessor {
         // -1 表示一行都没有
         int lastRowNum = sheet.getLastRowNum();
         int customRowNum = this.writeContext.getRowNum();
-        if (lastRowNum == -1) {
+        int physicalNumberOfRows = sheet.getPhysicalNumberOfRows();
+        if (physicalNumberOfRows == 0) {
             return customRowNum;
         } else {
             return lastRowNum + 1;
